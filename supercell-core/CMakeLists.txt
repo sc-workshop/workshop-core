@@ -24,6 +24,7 @@ endif()
 
 # add *.h and *.cpp files
 target_sources(${TARGET} PRIVATE ${HEADERS} ${SOURCES})
+source_group(TREE ${CMAKE_SOURCE_DIR} FILES ${HEADERS} ${SOURCES})
 
 # include directories
 target_include_directories(${TARGET} PUBLIC source)
