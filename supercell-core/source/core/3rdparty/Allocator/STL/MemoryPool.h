@@ -1,9 +1,11 @@
+// Source: https://github.com/ysmiles/allocator-cpp
+
 #pragma once
 
 #include <cstddef>
 #include <limits>
 
-// https://github.com/ysmiles/allocator-cpp
+
 
 namespace sc
 {

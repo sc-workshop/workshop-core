@@ -1,3 +1,12 @@
+:: Required Global Variables
+:: NDK_CMAKE: Path to cmake from Android Studio package manager like "C:\Users\{USER}\AppData\Local\Android\Sdk\cmake\{CMAKE VERSION}"
+:: NDK: Path to installed NDK like "C:\Users\{USER}\AppData\Local\Android\Sdk\ndk\{NDK VERSION}"
+
+:: Arguments
+:: 1. Path to source
+:: 2. Cmake build type {Debug, Release, RelWithDebInfo}
+:: 3. Target ABI {armeabi-v7a, arm64-v8a, x86, x86_64}
+
 @echo off
 
 set ABI=armeabi-v7a
