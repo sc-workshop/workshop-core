@@ -1,5 +1,7 @@
 # Project: supercell-core
 
+include(cmake/argparse.cmake)
+
 # C++ headers and source files
 file(GLOB_RECURSE HEADERS source/*.h)
 file(GLOB_RECURSE SOURCES source/*.cpp)
@@ -27,6 +29,9 @@ source_group(TREE ${SOURCE_DIR}/source FILES ${HEADERS} ${SOURCES})
 
 # include directories
 target_include_directories(${TARGET} PUBLIC source)
+
+# Link external dependencies
+target_link_libraries(${TARGET} PUBLIC argparse)
 
 # setup project
 sc_project_setup(${TARGET})

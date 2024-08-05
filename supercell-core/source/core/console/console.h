@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/3rdparty/argparse/argparse.h"
+#include <argparse/argparse.hpp>
 
 namespace sc
 {
