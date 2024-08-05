@@ -22,7 +22,8 @@ set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME "SupercellCore")
 
 # add *.h and *.cpp files
 target_sources(${TARGET} PRIVATE ${HEADERS} ${SOURCES})
-source_group(TREE ${CMAKE_SOURCE_DIR}/supercell-core/source FILES ${HEADERS} ${SOURCES})
+get_target_property(SOURCE_DIR ${TARGET} SOURCE_DIR)
+source_group(TREE ${SOURCE_DIR}/source FILES ${HEADERS} ${SOURCES})
 
 # include directories
 target_include_directories(${TARGET} PUBLIC source)

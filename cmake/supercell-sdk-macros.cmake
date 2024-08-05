@@ -44,8 +44,9 @@ function(sc_project_setup project_name)
             $<${SC_MSVC}: _CRT_SECURE_NO_WARNINGS>
     )
 
-    get_target_property(target_type ${project_name} TYPE)
 
+    # Dll handling
+    get_target_property(target_type ${project_name} TYPE)
     if (target_type STREQUAL "EXECUTABLE")
         target_compile_definitions(
             ${project_name} PRIVATE
@@ -57,8 +58,6 @@ function(sc_project_setup project_name)
             $<$<BOOL:${SC_BUILD_SHARED}>: SC_DLL_EXPORT=1>
         )
     endif ()
-
-    
 
     # force C++17
     target_compile_features(${project_name}
