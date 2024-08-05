@@ -1,10 +1,11 @@
 #pragma once
 
 #include <chrono>
+#include "core/preprocessor/api.h"
 
 namespace sc
 {
-	class Timer
+	class SUPERCELL_API Timer
 	{
 	public:
 		Timer()

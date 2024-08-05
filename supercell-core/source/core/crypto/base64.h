@@ -2,9 +2,11 @@
 
 #include <string>
 
+#include "core/preprocessor/api.h"
+
 namespace sc
 {
-	class Base64
+	class SUPERCELL_API Base64
 	{
 	public:
 		static std::string encode(const std::string& data, bool url_safe = false);

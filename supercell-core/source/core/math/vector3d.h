@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/memory/memory.h"
+#include "core/preprocessor/api.h"
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -9,7 +10,7 @@
 
 namespace sc
 {
-	struct Vector3D
+	struct SUPERCELL_API Vector3D
 	{
 		union
 		{

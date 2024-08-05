@@ -1,12 +1,12 @@
 #pragma once
 
 #include "core/io/stream.h"
-
 #include "core/exception/exception.h"
+#include "core/preprocessor/api.h"
 
 namespace sc
 {
-	class MemoryStream : public Stream
+	class SUPERCELL_API MemoryStream : public Stream
 	{
 	public:
 		NON_COPYABLE(MemoryStream)

@@ -9,31 +9,32 @@
 
 namespace sc
 {
+	template<typename T = int>
 	struct Rect
 	{
 		union
 		{
 			struct
 			{
-				float x, y;
-				float width, height;
+				T x, y;
+				T width, height;
 			};
 
 			struct
 			{
-				float left, top;
-				float right, bottom;
+				T left, top;
+				T right, bottom;
 			};
 
-			float points[4];
+			T points[4];
 		};
 
-		Rect(const float* arr)
+		Rect(const T* arr)
 		{
-			Memory::copy<float>(arr, points, sizeof(points));
+			Memory::copy(arr, points, sizeof(points));
 		};
 
-		Rect(float a = 0.0f, float b = 0.0f, float c = 0.0f, float d = 0.0f)
+		Rect(T a = 0.0f, T b = 0.0f, T c = 0.0f, T d = 0.0f)
 		{
 			x = a;
 			y = b;
@@ -41,6 +42,8 @@ namespace sc
 			height = d;
 		};
 	};
+
+	typedef Rect<float> RectF;
 }
 
 #ifdef _MSC_VER

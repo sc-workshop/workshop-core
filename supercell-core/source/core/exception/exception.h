@@ -2,12 +2,13 @@
 
 #include <stdexcept>
 #include <string>
-
 #include <cstdarg>
+
+#include "core/preprocessor/api.h"
 
 namespace sc
 {
-	class Exception : public std::exception
+	class SUPERCELL_API Exception : public std::exception
 	{
 	public:
 		Exception() = default;

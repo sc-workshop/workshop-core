@@ -1,14 +1,14 @@
 #pragma once
 
 #include "core/io/endian.h"
-
 #include "core/generic/non_copyable.h"
+#include "core/preprocessor/api.h"
 
 #include <string>
 
 namespace sc
 {
-	class Stream
+	class SUPERCELL_API Stream
 	{
 	public:
 		NON_COPYABLE(Stream)

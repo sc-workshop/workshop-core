@@ -5,6 +5,7 @@
 #include "core/io/stream.h"
 #include "core/memory/memory.h"
 #include "core/image/raw_image.h"
+#include "core/preprocessor/api.h"
 
 #pragma region STB Image Defines
 #define STBIR_MALLOC(size, c) ((void)(c), sc::Memory::allocate(size))
@@ -42,9 +43,9 @@ namespace sc
 	namespace stb
 	{
 #pragma region Image Read
-		int stbi_sc_io_read(void* user, char* data, int size);
-		void stbi_sc_io_skip(void* user, int n);
-		int stbi_sc_io_eof(void* user);
+		int SUPERCELL_API stbi_sc_io_read(void* user, char* data, int size);
+		void SUPERCELL_API stbi_sc_io_skip(void* user, int n);
+		int SUPERCELL_API stbi_sc_io_eof(void* user);
 
 		const stbi_io_callbacks stbi_sc_io_callback = { &stbi_sc_io_read, &stbi_sc_io_skip, &stbi_sc_io_eof };
 
@@ -53,7 +54,7 @@ namespace sc
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <returns>Loaded image</returns>
-		void load_image(Stream& stream, RawImage** image);
+		void SUPERCELL_API load_image(Stream& stream, RawImage** image);
 #pragma endregion
 
 		enum class ImageFormat : uint8_t
@@ -65,9 +66,9 @@ namespace sc
 		};
 
 #pragma region Image Write
-		void stbi_sc_io_write(void* user, void* data, int size);
+		void SUPERCELL_API stbi_sc_io_write(void* user, void* data, int size);
 
-		void write_image(RawImage& image, ImageFormat format, Stream& output);
+		void SUPERCELL_API write_image(RawImage& image, ImageFormat format, Stream& output);
 
 		/// <summary>
 		/// Saves images depending on path extension
@@ -75,7 +76,7 @@ namespace sc
 		/// <param name="image"></param>
 		/// <param name="extension"> Must be in lowercase </param>
 		/// <param name="output"></param>
-		void write_image(RawImage& image, std::string extension, Stream& output);
+		void SUPERCELL_API write_image(RawImage& image, std::string extension, Stream& output);
 #pragma endregion
 	}
 }

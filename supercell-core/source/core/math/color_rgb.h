@@ -9,24 +9,25 @@
 
 namespace sc
 {
+	template<typename T = uint8_t>
 	struct ColorRGB
 	{
 		union
 		{
 			struct
 			{
-				std::uint8_t r, g, b;
+				T r, g, b;
 			};
 
-			std::uint8_t channels[3];
+			T channels[3];
 		};
 
-		ColorRGB(const std::uint8_t* arr)
+		ColorRGB(const T* arr)
 		{
-			Memory::copy<std::uint8_t>(arr, channels, sizeof(channels));
+			Memory::copy(arr, channels, sizeof(channels));
 		};
 
-		ColorRGB(std::uint8_t red = 0, std::uint8_t green = 0, std::uint8_t blue = 0)
+		ColorRGB(T red = 0, T green = 0, T blue = 0)
 		{
 			r = red;
 			g = green;

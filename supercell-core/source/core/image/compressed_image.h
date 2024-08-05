@@ -1,10 +1,11 @@
 #pragma once
 
 #include "core/image/image.h"
+#include "core/preprocessor/api.h"
 
 namespace sc
 {
-	class CompressedImage : public Image
+	class SUPERCELL_API CompressedImage : public Image
 	{
 	public:
 		CompressedImage() = default;

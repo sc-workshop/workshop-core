@@ -1,10 +1,11 @@
 #pragma once
 
 #include "core/io/stream.h"
+#include "core/preprocessor/api.h"
 
 namespace sc
 {
-	class Image
+	class SUPERCELL_API Image
 	{
 	public:
 		Image() = default;

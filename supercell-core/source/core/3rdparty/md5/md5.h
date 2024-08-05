@@ -4,6 +4,8 @@
 #include <cstring>
 #include <memory>
 
+#include "core/preprocessor/api.h"
+
 /* Constants for md5::transform routine. */
 #define S11 7
 #define S12 12
@@ -60,7 +62,7 @@ static unsigned char PADDING[64] = {
 	(a) += (b); \
     }
 
-class md5
+class SUPERCELL_API md5
 {
 public:
 

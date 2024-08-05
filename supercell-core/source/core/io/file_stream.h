@@ -3,6 +3,7 @@
 #include "core/io/stream.h"
 #include "core/memory/memory.h"
 #include "core/exception/exception.h"
+#include "core/preprocessor/api.h"
 
 #include "core/generic/non_copyable.h"
 
@@ -14,7 +15,7 @@ namespace fs = std::filesystem;
 
 namespace sc
 {
-	class InputFileStream : public Stream
+	class SUPERCELL_API InputFileStream : public Stream
 	{
 	public:
 		NON_COPYABLE(InputFileStream)

@@ -1,12 +1,13 @@
 #pragma once
 
 #include "core/io/stream.h"
+#include "core/preprocessor/api.h"
 
 #include <vector>
 
 namespace sc
 {
-	class BufferStream : public Stream
+	class SUPERCELL_API BufferStream : public Stream
 	{
 	public:
 		NON_COPYABLE(BufferStream)

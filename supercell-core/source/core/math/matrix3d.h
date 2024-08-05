@@ -1,6 +1,7 @@
 #pragma once
 
-#include <cstring>
+#include "core/memory/memory.h"
+#include "core/preprocessor/api.h"
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -9,7 +10,7 @@
 
 namespace sc
 {
-	struct Matrix3D
+	struct SUPERCELL_API Matrix3D
 	{
 		union
 		{
@@ -26,7 +27,7 @@ namespace sc
 
 		Matrix3D(const float* arr)
 		{
-			memcpy(elements, arr, sizeof(elements));
+			Memory::copy(arr, elements, sizeof(elements));
 		};
 
 		Matrix3D(

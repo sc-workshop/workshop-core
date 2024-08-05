@@ -1,10 +1,11 @@
 #pragma once
 
 #include "core/image/image.h"
+#include "core/preprocessor/api.h"
 
 namespace sc
 {
-	class RawImage : public Image
+	class SUPERCELL_API RawImage : public Image
 	{
 	public:
 		RawImage(const RawImage&) = delete;
