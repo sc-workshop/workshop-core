@@ -38,6 +38,12 @@ function(sc_project_setup project_name)
         $<$<OR:${SC_GNU},${SC_CLANG}>:-Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unknown-pragmas -Werror -Wno-gnu-anonymous-struct -Wno-nested-anon-types> # Settings for GNU and Clang compilers
     )
 
+    # compile defines
+    target_compile_definitions(
+            ${project_name} PRIVATE
+            $<${SC_MSVC}: _CRT_SECURE_NO_WARNINGS>
+    )
+
     get_target_property(target_type ${project_name} TYPE)
 
     if (target_type STREQUAL "EXECUTABLE")

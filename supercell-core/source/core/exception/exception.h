@@ -8,7 +8,7 @@
 
 namespace sc
 {
-	class SUPERCELL_API Exception : public std::exception
+	class Exception : public std::exception
 	{
 	public:
 		Exception() = default;

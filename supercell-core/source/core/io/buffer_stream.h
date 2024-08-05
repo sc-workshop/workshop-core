@@ -7,7 +7,7 @@
 
 namespace sc
 {
-	class SUPERCELL_API BufferStream : public Stream
+	class BufferStream : public Stream
 	{
 	public:
 		NON_COPYABLE(BufferStream)

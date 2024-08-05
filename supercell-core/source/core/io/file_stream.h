@@ -15,7 +15,7 @@ namespace fs = std::filesystem;
 
 namespace sc
 {
-	class SUPERCELL_API InputFileStream : public Stream
+	class InputFileStream : public Stream
 	{
 	public:
 		NON_COPYABLE(InputFileStream)
