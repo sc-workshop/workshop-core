@@ -73,13 +73,13 @@ namespace sc
 			switch (mode)
 			{
 			case SeekMode::Set:
-				m_file.seekg(position, std::ios::beg);
 				m_position = position;
+				m_file.seekg(m_position, std::ios::beg);
 				break;
 
 			case SeekMode::Add:
-				m_file.seekg(position, std::ios::cur);
 				m_position += position;
+				m_file.seekg(m_position, std::ios::beg);
 				break;
 
 			default:
@@ -170,16 +170,16 @@ namespace sc
 			return m_file.tellp();
 		};
 
-		size_t seek(size_t position, SeekMode mode) override
+		size_t seek(size_t next_position, SeekMode mode) override
 		{
 			switch (mode)
 			{
 			case SeekMode::Set:
-				m_file.seekp(position, std::ios::beg);
+				m_file.seekp(next_position, std::ios::beg);
 				break;
 
 			case SeekMode::Add:
-				m_file.seekp(position, std::ios::cur);
+				m_file.seekp(position() + next_position, std::ios::cur);
 				break;
 
 			default:
