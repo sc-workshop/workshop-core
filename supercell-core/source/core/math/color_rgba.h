@@ -9,8 +9,8 @@
 
 namespace sc
 {
-	template<typename T = uint8_t>
-	struct ColorRGBA
+	template<typename T>
+	struct ColorRGBA_t
 	{
 		union
 		{
@@ -32,9 +32,11 @@ namespace sc
 			r = red;
 			g = green;
 			b = blue;
-            a = alpha;
+			a = alpha;
 		};
 	};
+
+	using ColorRGBA = ColorRGBA_t<uint8_t>;
 }
 
 #ifdef _MSC_VER

@@ -9,8 +9,8 @@
 
 namespace sc
 {
-	template<typename T = int>
-	struct Rect
+	template<typename T>
+	struct Rect_t
 	{
 		union
 		{
@@ -43,7 +43,8 @@ namespace sc
 		};
 	};
 
-	typedef Rect<float> RectF;
+	using Rect = Rect_t<int>;
+	using RectF = Rect_t<float>;
 }
 
 #ifdef _MSC_VER

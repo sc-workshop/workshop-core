@@ -10,7 +10,7 @@
 namespace sc
 {
 	template<typename T = uint8_t>
-	struct ColorRGB
+	struct ColorRGB_t
 	{
 		union
 		{
@@ -34,6 +34,8 @@ namespace sc
 			b = blue;
 		};
 	};
+
+	using ColorRGB = ColorRGB_t<uint8_t>;
 }
 
 #ifdef _MSC_VER

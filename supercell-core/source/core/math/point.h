@@ -9,8 +9,8 @@
 
 namespace sc
 {
-	template<typename T = int>
-	struct Point
+	template<typename T>
+	struct Point_t
 	{
 		union
 		{
@@ -54,7 +54,8 @@ namespace sc
 		};
 	};
 
-	typedef Point<float> PointF;
+	using Point = Point_t<int>;
+	using PointF = Point_t<float>;
 }
 
 #ifdef _MSC_VER
