@@ -1,7 +1,5 @@
 # Project: supercell-core
 
-include(cmake/argparse.cmake)
-
 # C++ headers and source files
 file(GLOB_RECURSE HEADERS source/*.h)
 file(GLOB_RECURSE SOURCES source/*.cpp)
@@ -22,16 +20,29 @@ endif()
 add_library(supercell::core ALIAS ${TARGET})
 set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME "SupercellCore")
 
+set_target_properties(${TARGET} PROPERTIES
+    FOLDER SupercellSDK/core
+)
+
 # add *.h and *.cpp files
 target_sources(${TARGET} PRIVATE ${HEADERS} ${SOURCES})
-get_target_property(SOURCE_DIR ${TARGET} SOURCE_DIR)
-source_group(TREE ${SOURCE_DIR}/source FILES ${HEADERS} ${SOURCES})
 
 # include directories
 target_include_directories(${TARGET} PUBLIC source)
 
-# Link external dependencies
-target_link_libraries(${TARGET} PUBLIC argparse)
+if (SC_CLI_DEPENDENCIES)
+    include(cmake/argparse.cmake)
+    target_link_libraries(${TARGET} PUBLIC argparse)
+    
+endif()
+
+if (SC_SERIALIZATION_DEPENDENCIES)
+    include(cmake/flatbuffers.cmake)
+    target_link_libraries(${TARGET} PUBLIC FlatBuffers::FlatBuffers)
+
+    include(cmake/json.cmake)
+    target_link_libraries(${TARGET} PUBLIC nlohmann_json::nlohmann_json)
+endif()
 
 # setup project
 sc_project_setup(${TARGET})

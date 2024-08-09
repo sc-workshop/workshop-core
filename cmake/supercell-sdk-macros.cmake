@@ -59,6 +59,13 @@ function(sc_project_setup project_name)
         )
     endif ()
 
+    # File grouping
+    if (NOT SC_IN_SOURCE_BUILD)
+        get_target_property(SOURCES ${project_name} SOURCES)
+        get_target_property(SOURCE_DIR ${project_name} SOURCE_DIR)
+        source_group(TREE ${SOURCE_DIR}/source FILES ${SOURCES})
+    endif()
+
     # force C++17
     target_compile_features(${project_name}
         PRIVATE
