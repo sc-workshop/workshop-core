@@ -22,12 +22,12 @@ namespace sc
 			T channels[3];
 		};
 
-		ColorRGB(const T* arr)
+		ColorRGB_t(const T* arr)
 		{
 			Memory::copy(arr, channels, sizeof(channels));
 		};
 
-		ColorRGB(T red = 0, T green = 0, T blue = 0)
+		ColorRGB_t(T red = 0, T green = 0, T blue = 0)
 		{
 			r = red;
 			g = green;

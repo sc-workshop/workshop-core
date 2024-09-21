@@ -22,12 +22,12 @@ namespace sc
 			T channels[4];
 		};
 
-		ColorRGBA(const T* arr)
+		ColorRGBA_t(const T* arr)
 		{
 			Memory::copy(arr, channels, sizeof(channels));
 		};
 
-		ColorRGBA(T red = 0, T green = 0, T blue = 0, T alpha = 0)
+		ColorRGBA_t(T red = 0, T green = 0, T blue = 0, T alpha = 0)
 		{
 			r = red;
 			g = green;

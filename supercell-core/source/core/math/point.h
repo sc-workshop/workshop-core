@@ -47,7 +47,7 @@ namespace sc
 			Memory::copy(arr, coords, sizeof(coords));
 		}
 
-		Point(T a = 0.0f, T b = 0.0f)
+		Point_t(T a = 0.0f, T b = 0.0f)
 		{
 			x = a;
 			y = b;

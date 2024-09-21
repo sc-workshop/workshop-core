@@ -29,12 +29,12 @@ namespace sc
 			T points[4];
 		};
 
-		Rect(const T* arr)
+		Rect_t(const T* arr)
 		{
 			Memory::copy(arr, points, sizeof(points));
 		};
 
-		Rect(T a = 0.0f, T b = 0.0f, T c = 0.0f, T d = 0.0f)
+		Rect_t(T a = 0.0f, T b = 0.0f, T c = 0.0f, T d = 0.0f)
 		{
 			x = a;
 			y = b;
