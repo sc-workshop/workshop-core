@@ -9,7 +9,7 @@ option(SC_IN_SOURCE_BUILD "Build Supercell SDK with In-Source way" OFF)
 
 # third-party
 option(SC_CLI_DEPENDENCIES "Include libraries for CLI e.g Argparse" OFF)
-option(SC_SERIALIZATION_DEPENDENCIES "Include libraries for serialization e.g JSON or Flatbuffers")
+option(SC_SERIALIZATION_DEPENDENCIES "Include libraries for serialization e.g JSON or Flatbuffers" OFF)
 
 # includes
 include(FetchContent)
