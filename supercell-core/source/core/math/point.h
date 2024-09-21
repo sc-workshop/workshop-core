@@ -42,7 +42,7 @@ namespace sc
 			T coords[2];
 		};
 
-		Point(const T* arr)
+		Point_t(const T* arr)
 		{
 			Memory::copy(arr, coords, sizeof(coords));
 		}
