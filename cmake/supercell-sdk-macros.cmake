@@ -33,7 +33,7 @@ function(sc_project_setup project_name)
     target_compile_options(${project_name} PRIVATE
         $<$<AND:${SC_MSVC},${SC_RELEASE}>: /Wall /Ox /GF /Gy /GS- /Ob2 /Oi /Ot> # Settings for release builds
 
-        $<${SC_MSVC}: /wd4820 /wd4365 /wd4061 /wd4514 /wd5219 /wd4242 /wd4711 /wd4710 /wd4625 /wd4626 /wd5039 /wd5045 /wd5026 /wd5027 /wd4623 /wd4201> # Disable stupid warnings
+        $<${SC_MSVC}: /wd4820 /wd4365 /wd4061 /wd4514 /wd5219 /wd4242 /wd4711 /wd4710 /wd4625 /wd4626 /wd5039 /wd5045 /wd5026 /wd5027 /wd4623 /wd4201 /wd4099 /wd5267> # Disable stupid warnings
 
         $<$<OR:${SC_GNU},${SC_CLANG}>:-Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unknown-pragmas -Werror -Wno-gnu-anonymous-struct -Wno-nested-anon-types> # Settings for GNU and Clang compilers
     )
