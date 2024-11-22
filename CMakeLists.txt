@@ -1,20 +1,19 @@
 ﻿cmake_minimum_required(VERSION 3.22)
 
-project("SupercelllCore" CXX)
+# workspace
+project(supercell-sdk)
 
-include(cmake/SupercellCore.cmake)
+# options
+option(SC_BUILD_SHARED "Build Supercell SDK as shared libraries" OFF)
+option(SC_IN_SOURCE_BUILD "Build Supercell SDK with In-Source way" OFF)
 
-# Options
-option(SC_CORE_TEST "Build Core Test" OFF)
+# third-party
+option(SC_CLI_DEPENDENCIES "Include libraries for CLI e.g Argparse" OFF)
+option(SC_SERIALIZATION_DEPENDENCIES "Include libraries for serialization e.g JSON or Flatbuffers" OFF)
 
-if(${SC_CORE_TEST})
-  add_executable("SupercellCoreTest"
-    "test/main.cpp"
-  )
+# includes
+include(FetchContent)
+include(cmake/supercell-sdk-macros.cmake)
 
-  sc_core_base_setup("SupercellCoreTest")
-  target_link_libraries("SupercellCoreTest" PUBLIC SupercellCore)
-  set_target_properties("SupercellCoreTest" PROPERTIES
-    FOLDER Supercell/CLI
-  )
-endif()
+# projects
+add_subdirectory(supercell-core)
