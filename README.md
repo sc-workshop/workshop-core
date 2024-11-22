@@ -1,5 +1,5 @@
 
-# Supercell-Core
+# Workshop-Core
 
 C++ library with useful tools and functions for our other projects.
 The library contains tools for working with files, byte and memory streams, some debugging utilities, and templates to simplify writing code.
