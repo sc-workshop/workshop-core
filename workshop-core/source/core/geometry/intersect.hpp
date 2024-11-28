@@ -5,7 +5,7 @@
 #include <optional>
 #include <tuple>
 
-namespace wk
+namespace wk::Geometry
 {
 	// https://flassari.is/2008/11/line-line-intersection-in-cplusplus
 	std::optional<PointF> line_intersect(const LineF l1, const LineF l2)
