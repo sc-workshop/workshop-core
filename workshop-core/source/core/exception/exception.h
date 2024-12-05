@@ -21,10 +21,10 @@ namespace wk
 	public:
 		const char* what() const noexcept override { return m_message.c_str(); }
 
-	private:
+	protected:
 		void proceed_vargs(const char* format, va_list args);
 
-	private:
+	protected:
 		std::string m_message;
 	};
 }
