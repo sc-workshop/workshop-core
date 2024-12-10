@@ -42,6 +42,8 @@ namespace wk
 
 		bool is_writable() const override { return true; };
 
+		bool reserve(size_t size) { m_buffer.reserve(size); };
+
 	public:
 		void resize(std::size_t length)
 		{
