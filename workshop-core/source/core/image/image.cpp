@@ -34,8 +34,8 @@ namespace wk
 	//			<---------------- Static members ---------------->
 	std::size_t Image::calculate_image_length(std::uint16_t width, std::uint16_t height, PixelDepth depth)
 	{
-		std::uint8_t pixel_size = PixelDepthTable[(std::uint16_t)depth].byte_count;
-		return (width * height) * pixel_size;
+		size_t pixel_size = PixelDepthTable[(std::uint16_t)depth].byte_count;
+		return ((size_t)width * height) * pixel_size;
 	}
 
 	bool Image::check_depth_base_type(Image::BasePixelType type, Image::PixelDepth depth)
@@ -70,7 +70,7 @@ namespace wk
 		Image::PixelDepth source, Image::PixelDepth destination
 	)
 	{
-		std::uint64_t pixel_count = width * height;
+		size_t pixel_count = (size_t)width * height;
 
 		const PixelDepthInfo& input_pixel_info = PixelDepthTable[(std::uint16_t)source];
 		const PixelDepthInfo& output_pixel_info = PixelDepthTable[(std::uint16_t)destination];
