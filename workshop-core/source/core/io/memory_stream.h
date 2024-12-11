@@ -12,7 +12,7 @@ namespace wk
 
 	public:
 		MemoryStream(std::size_t length = 0);
-		virtual ~MemoryStream();
+		virtual ~MemoryStream() = default;
 
 	public:
 		virtual void* data_ref() const;
