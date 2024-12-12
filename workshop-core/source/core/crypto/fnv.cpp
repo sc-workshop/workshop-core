@@ -6,7 +6,7 @@ namespace wk
 	{
 		uint32_t hash = 2166136261U;
 
-		for (uint32_t i = 0; length != 0; ++i) {
+		for (size_t i = 0; length > i; ++i) {
 			hash = 16777619U * (hash ^ *((const uint8_t*)data + i));
 		}
 
@@ -15,9 +15,9 @@ namespace wk
 
 	uint64_t Fnv::fnv1a64(const void* data, size_t length)
 	{
-		uint32_t hash = 14695981039346656037ULL;
+		uint64_t hash = 14695981039346656037ULL;
 
-		for (uint32_t i = 0; length != 0; ++i) {
+		for (size_t i = 0; length > i; ++i) {
 			hash = 1099511628211ULL * (hash ^ *((const uint8_t*)data + i));
 		}
 

@@ -37,7 +37,7 @@ namespace wk
 			return stream->position() == stream->length() ? -1 : 0;
 		};
 
-		void load_image(Stream& stream, RawImage** image)
+		void load_image(Stream& stream, Ref<RawImage>& image_buffer)
 		{
 			int width, height, channels;
 
@@ -78,7 +78,7 @@ namespace wk
 				break;
 			}
 
-			RawImage* image_buffer = new RawImage(
+			image_buffer = wk::CreateRef<RawImage>(
 				static_cast<uint16_t>(width), static_cast<uint16_t>(height),
 				depth, Image::ColorSpace::sRGB
 			);
@@ -90,15 +90,12 @@ namespace wk
 
 				if (data == NULL)
 				{
-					delete image_buffer;
 					throw Exception("Stb loading exception! %s", stbi_failure_reason());
 				};
 
 				Memory::copy(data, image_buffer->data(), image_buffer->data_length());
 				stbi_image_free(data);
 			}
-
-			*image = image_buffer;
 		}
 #pragma endregion
 

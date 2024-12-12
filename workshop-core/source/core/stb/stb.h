@@ -6,6 +6,7 @@
 #include "core/memory/memory.h"
 #include "core/image/raw_image.h"
 #include "core/preprocessor/api.h"
+#include "core/memory/ref.h"
 
 #pragma region STB Image Defines
 #define STBIR_MALLOC(size, c) ((void)(c), wk::Memory::allocate(size))
@@ -54,7 +55,7 @@ namespace wk
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <returns>Loaded image</returns>
-		void WORKSHOP_API load_image(Stream& stream, RawImage** image);
+		void WORKSHOP_API load_image(Stream& stream, Ref<RawImage>& image);
 #pragma endregion
 
 		enum class ImageFormat : uint8_t
