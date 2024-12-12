@@ -38,6 +38,7 @@ endif()
 
 if (WK_SERIALIZATION_FLATBUFFER)
     include(cmake/flatbuffers.cmake)
+    include (cmake/scripts/flatbuffer_generate.cmake)
     target_link_libraries(${TARGET} PUBLIC FlatBuffers::FlatBuffers)
 endif()
 

@@ -23,9 +23,9 @@ namespace wk
 		virtual ~BufferStream() = default;
 
 	public:
-		void* data() const { return (void*)m_buffer.data(); };
+		virtual void* data() const { return (void*)m_buffer.data(); };
 
-		void* data() override
+		virtual void* data() override
 		{
 			return const_cast<void*>(const_cast<const BufferStream*>(this)->data());
 		};
@@ -41,6 +41,8 @@ namespace wk
 		bool is_readable() const override { return true; };
 
 		bool is_writable() const override { return true; };
+
+		void reserve(size_t size) { m_buffer.reserve(size); };
 
 	public:
 		void resize(std::size_t length)
