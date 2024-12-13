@@ -1,8 +1,9 @@
 #include "core/image/image.h"
-
 #include "core/memory/memory.h"
-
 #include "core/stb/stb.h"
+
+#include <vector>
+#include <map>
 
 namespace wk
 {
@@ -176,36 +177,30 @@ namespace wk
 			{
 				std::uint8_t bit_index = output_pixel_info.byte_count * 8;
 
-				if (output_pixel_info.a_bits != 0xFF)
-				{
-					bit_index -= output_pixel_info.a_bits;
-					std::int8_t bit_offset = (input_pixel_info.a_bits - output_pixel_info.a_bits) >= 0 ? input_pixel_info.a_bits - output_pixel_info.a_bits : 0;
-					std::uint64_t bits_mask = (std::uint64_t)((pow(2, output_pixel_info.a_bits) - 1)) << bit_offset;
-					output_pixel_buffer |= ((a_channel & bits_mask) >> bit_offset) << bit_index;
-				}
+				std::vector<std::tuple<uint8_t, uint8_t, uint8_t>> channels = { 
+					{input_pixel_info.a_bits, output_pixel_info.a_bits, a_channel},
+					{input_pixel_info.r_bits, output_pixel_info.r_bits, r_channel},
+					{input_pixel_info.g_bits, output_pixel_info.g_bits, g_channel},
+					{input_pixel_info.b_bits, output_pixel_info.b_bits, b_channel}
+				};
 
-				if (output_pixel_info.r_bits != 0xFF)
+				for (auto& channel : channels)
 				{
-					bit_index -= output_pixel_info.r_bits;
-					std::int8_t bit_offset = (input_pixel_info.r_bits - output_pixel_info.r_bits) >= 0 ? input_pixel_info.r_bits - output_pixel_info.r_bits : 0;
-					std::uint64_t bits_mask = (std::uint64_t)((pow(2, output_pixel_info.r_bits) - 1)) << bit_offset;
-					output_pixel_buffer |= ((r_channel & bits_mask) >> bit_offset) << bit_index;
-				}
+					auto& [input, output, value] = channel;
 
-				if (output_pixel_info.g_bits != 0xFF)
-				{
-					bit_index -= output_pixel_info.g_bits;
-					std::int8_t bit_offset = (input_pixel_info.g_bits - output_pixel_info.g_bits) >= 0 ? input_pixel_info.g_bits - output_pixel_info.g_bits : 0;
-					std::uint64_t bits_mask = (std::uint64_t)((pow(2, output_pixel_info.g_bits) - 1)) << bit_offset;
-					output_pixel_buffer |= ((g_channel & bits_mask) >> bit_offset) << bit_index;
-				}
-
-				if (output_pixel_info.b_bits != 0xFF)
-				{
-					bit_index -= output_pixel_info.b_bits;
-					std::int8_t bit_offset = (input_pixel_info.b_bits - output_pixel_info.b_bits) >= 0 ? input_pixel_info.b_bits - output_pixel_info.b_bits : 0;
-					std::uint64_t bits_mask = (std::uint64_t)((pow(2, output_pixel_info.b_bits) - 1)) << bit_offset;
-					output_pixel_buffer |= ((b_channel & bits_mask) >> bit_offset) << bit_index;
+					if (output != 0xFF)
+					{
+						bit_index -= output;
+						std::int8_t bit_offset = 0;
+						
+						if (input != 0xFF)
+						{
+							bit_offset = (input - output) >= 0 ? input - output : 0;
+						}
+						
+						std::uint64_t bits_mask = (std::uint64_t)((pow(2, output) - 1)) << bit_offset;
+						output_pixel_buffer |= ((value & bits_mask) >> bit_offset) << bit_index;
+					}
 				}
 			}
 
