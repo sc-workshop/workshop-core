@@ -126,7 +126,7 @@ function(wk_flatbuffers_generate_headers)
     )
     list(APPEND all_generated_header_files ${generated_include})
     list(APPEND all_generated_source_files ${generated_source_file})
-    list(APPEND generated_custom_commands "${generated_include}" "${generated_source_file}")
+    list(APPEND generated_custom_commands "${generated_include}")
 
     # Geneate the binary flatbuffers schemas if instructed to.
     if (NOT ${FLATBUFFERS_GENERATE_HEADERS_BINARY_SCHEMAS_DIR} STREQUAL "")
@@ -146,24 +146,25 @@ function(wk_flatbuffers_generate_headers)
   endforeach()
 
   # Create an additional target as add_custom_command scope is only within same directory (CMakeFile.txt)
-  set(generate_target GENERATE_${FLATBUFFERS_GENERATE_HEADERS_TARGET})
-  add_custom_target(${generate_target} ALL
-                    DEPENDS ${generated_custom_commands}
-                    COMMENT "Generating flatbuffer target ${FLATBUFFERS_GENERATE_HEADERS_TARGET}")
+  #set(generate_target GENERATE_${FLATBUFFERS_GENERATE_HEADERS_TARGET})
+  #add_custom_target(${generate_target} ALL
+  #                  #DEPENDS ${generated_custom_commands}
+  #                  COMMENT "Generating flatbuffer target ${FLATBUFFERS_GENERATE_HEADERS_TARGET}")
 
   # Set up interface library
   add_library(${FLATBUFFERS_GENERATE_HEADERS_TARGET} INTERFACE)
-  target_sources(
-    ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
-    INTERFACE
-      ${all_generated_header_files}
-      ${all_generated_binary_files}
-      ${all_generated_source_files}
-      ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
-  add_dependencies(
-    ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
-    ${FLATC}
-    ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
+  #target_sources(
+  #  ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
+  #  INTERFACE
+  #    ${all_generated_header_files}
+  #    ${all_generated_binary_files}
+  #    ${all_generated_source_files}
+  #    #${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS}
+  #)
+  #add_dependencies(
+  #  ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
+  #  ${FLATC}
+  #  ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
   target_include_directories(
     ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
     INTERFACE ${generated_target_dir})
