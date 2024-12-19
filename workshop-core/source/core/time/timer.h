@@ -19,7 +19,7 @@ namespace wk
 			m_start_time = std::chrono::high_resolution_clock::now();
 		}
 
-		float elapsed()
+		long long elapsed() const
 		{
 			return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_start_time).count();
 		}
