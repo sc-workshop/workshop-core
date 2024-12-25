@@ -17,6 +17,8 @@ else()
     add_library(${TARGET} STATIC)
 endif()
 
+# Target
+set(wk_core_target "${TARGET}" CACHE INTERNAL "")
 add_library(wk::core ALIAS ${TARGET})
 set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME "WorkshopCore")
 
@@ -31,6 +33,7 @@ target_sources(${TARGET} PRIVATE ${HEADERS} ${SOURCES})
 target_include_directories(${TARGET} PUBLIC source)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" CACHE INTERNAL "")
 
 # setup project
 wk_project_setup(${TARGET})
