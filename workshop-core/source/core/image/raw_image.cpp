@@ -69,36 +69,37 @@ namespace wk
 		size_t data_size = Image::calculate_image_length(image.width(), image.height(), image.depth());
 		uint8_t* data = nullptr;
 
-		Image::PixelDepth base_depth = m_depth;
-		switch (m_depth)
-		{
-			// RGBA
-		case Image::PixelDepth::RGBA4:
-		case Image::PixelDepth::RGB5_A1:
-			base_depth = Image::PixelDepth::RGBA8;
-			break;
-
-			// RGB
-		case Image::PixelDepth::RGB565:
-			base_depth = Image::PixelDepth::RGB8;
-			break;
-
-		case Image::PixelDepth::RGB8:
-		case Image::PixelDepth::LUMINANCE8_ALPHA8:
-		case Image::PixelDepth::LUMINANCE8:
-		case Image::PixelDepth::RGBA8:
-		default:
-			break;
-		}
-
+		Image::PixelDepth current_depth = m_depth;
 		if (image.width() != m_width || image.height() != m_height)
 		{
+			// Convert image to a more convenient type to change size
+			switch (m_depth)
+			{
+				// RGBA
+			case Image::PixelDepth::RGBA4:
+			case Image::PixelDepth::RGB5_A1:
+				current_depth = Image::PixelDepth::RGBA8;
+				break;
+
+				// RGB
+			case Image::PixelDepth::RGB565:
+				current_depth = Image::PixelDepth::RGB8;
+				break;
+
+			case Image::PixelDepth::RGB8:
+			case Image::PixelDepth::LUMINANCE8_ALPHA8:
+			case Image::PixelDepth::LUMINANCE8:
+			case Image::PixelDepth::RGBA8:
+			default:
+				break;
+			}
+
 			uint8_t* base_depth_data = nullptr;
 
-			if (base_depth != m_depth)
+			if (current_depth != m_depth)
 			{
-				base_depth_data = Memory::allocate(Image::calculate_image_length(m_width, m_height, base_depth));
-				Image::remap(m_data, base_depth_data, m_width, m_height, m_depth, base_depth);
+				base_depth_data = Memory::allocate(Image::calculate_image_length(m_width, m_height, current_depth));
+				Image::remap(m_data, base_depth_data, m_width, m_height, m_depth, current_depth);
 			}
 
 			data = Memory::allocate(Image::calculate_image_length(image.width(), image.height(), m_depth));
@@ -111,7 +112,7 @@ namespace wk
 
 			if (base_depth_data)
 			{
-				free(base_depth_data);
+				Memory::free(base_depth_data);
 			}
 		}
 
@@ -120,7 +121,7 @@ namespace wk
 			Image::remap(
 				data ? data : m_data, image.data(),
 				image.width(), image.height(),
-				base_depth, image.depth()
+				current_depth, image.depth()
 			);
 		}
 		else
@@ -130,7 +131,7 @@ namespace wk
 
 		if (data)
 		{
-			free(data);
+			Memory::free(data);
 		}
 	};
 
