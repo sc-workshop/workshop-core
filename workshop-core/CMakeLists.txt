@@ -30,22 +30,7 @@ target_sources(${TARGET} PRIVATE ${HEADERS} ${SOURCES})
 # include directories
 target_include_directories(${TARGET} PUBLIC source)
 
-if (WK_CLI_DEPENDENCIES)
-    include(cmake/argparse.cmake)
-    target_link_libraries(${TARGET} PUBLIC argparse)
-    
-endif()
-
-if (WK_SERIALIZATION_FLATBUFFER)
-    include(cmake/flatbuffers.cmake)
-    include (cmake/scripts/flatbuffer_generate.cmake)
-    target_link_libraries(${TARGET} PUBLIC FlatBuffers::FlatBuffers)
-endif()
-
-if (WK_SERIALIZATION_JSON)
-    include(cmake/json.cmake)
-    target_link_libraries(${TARGET} PUBLIC nlohmann_json::nlohmann_json)
-endif()
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 
 # setup project
 wk_project_setup(${TARGET})
