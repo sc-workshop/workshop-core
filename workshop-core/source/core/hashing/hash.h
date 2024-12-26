@@ -1,10 +1,7 @@
 #pragma once
 
-namespace wk
+namespace wk::hash
 {
-	template<>
-	struct Hash_t
-	{
-
-	};
+	template<typename T>
+	struct Hash_t;
 }

@@ -77,7 +77,7 @@ public:
 	/* MD5 block update operation. Continues an MD5 message-digest
 	   operation, processing another message block, and updating the
 	   context. */
-	void update(uint8_t* input, size_t length)
+	void update(const uint8_t* input, size_t length)
 	{
 		unsigned int i, index, partLen;
 

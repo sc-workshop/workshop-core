@@ -4,9 +4,7 @@
 #include <stdint.h>
 #include <type_traits>
 
-#include <hash_map>
-
-namespace wk
+namespace wk::hash
 {
 	template<typename T>
 	class HashStream
@@ -16,21 +14,38 @@ namespace wk
 
 	public:
 		NON_COPYABLE(HashStream);
+		HashStream() = default;
 		virtual ~HashStream() = default;
 
 	public:
 		virtual Digest digest() const = 0;
+		virtual void clear() = 0;
 
 		void update(const uint8_t* data, size_t length)
 		{
+			std::hash<HashStream>;
 			update_hash(data, length);
 		}
 
-		template<typename ValueT, typename = !std::is_volatile<T>
-											&& (std::is_enum<T> || std::is_integral<T> || std::is_pointer<T>)>
+		// Update function for basic types
+		template<
+			typename ValueT,
+			typename std::enable_if_t<
+				std::is_enum_v<ValueT> || 
+				std::is_arithmetic_v<ValueT> ||
+				std::is_pointer_v<ValueT>
+			, bool> = true>
 		void update(const ValueT value)
 		{
+			std::hash<uint16_t>
 			update((const uint8_t*)&value, sizeof(value));
+		}
+
+		// Update function for user defined classes
+		template<typename T>
+		void update(const T& value)
+		{
+			hash_t<T>(*this, value);
 		}
 
 	protected:
