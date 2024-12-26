@@ -178,10 +178,10 @@ namespace wk
 				std::uint8_t bit_index = output_pixel_info.byte_count * 8;
 
 				std::vector<std::tuple<uint8_t, uint8_t, uint8_t>> channels = { 
-					{input_pixel_info.a_bits, output_pixel_info.a_bits, a_channel},
-					{input_pixel_info.b_bits, output_pixel_info.b_bits, b_channel},
+					{input_pixel_info.r_bits, output_pixel_info.r_bits, r_channel},
 					{input_pixel_info.g_bits, output_pixel_info.g_bits, g_channel},
-					{input_pixel_info.r_bits, output_pixel_info.r_bits, r_channel}
+					{input_pixel_info.b_bits, output_pixel_info.b_bits, b_channel},
+					{input_pixel_info.a_bits, output_pixel_info.a_bits, a_channel},
 				};
 
 				for (auto& channel : channels)

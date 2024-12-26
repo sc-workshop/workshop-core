@@ -1,5 +1,5 @@
 include(FetchContent)
-include(cmake/scripts/flatbuffer_generate.cmake)
+include(scripts/flatbuffer_generate)
 
 function(wk_include_flatbuffers)
     set(FLATBUFFERS_BUILD_FLATC OFF)
@@ -11,5 +11,5 @@ function(wk_include_flatbuffers)
         GIT_TAG v24.3.25
     )
     FetchContent_MakeAvailable(flatbuffers)
-    target_link_libraries(wk::core PUBLIC FlatBuffers::FlatBuffers)
+    target_link_libraries(${wk_core_target} PUBLIC FlatBuffers::FlatBuffers)
 endfunction()
