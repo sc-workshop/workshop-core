@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <type_traits>
+#include "hash.h"
 
 namespace wk::hash
 {
@@ -23,7 +24,6 @@ namespace wk::hash
 
 		void update(const uint8_t* data, size_t length)
 		{
-			std::hash<HashStream>;
 			update_hash(data, length);
 		}
 
@@ -37,15 +37,18 @@ namespace wk::hash
 			, bool> = true>
 		void update(const ValueT value)
 		{
-			std::hash<uint16_t>
 			update((const uint8_t*)&value, sizeof(value));
 		}
 
 		// Update function for user defined classes
-		template<typename T>
-		void update(const T& value)
+		template<
+			typename ValueT,
+			typename std::enable_if_t<
+			std::is_class_v<ValueT>
+			, bool> = true>
+		void update(const ValueT & value)
 		{
-			hash_t<T>(*this, value);
+			Hash_t<ValueT>::update<T>(*this, value);
 		}
 
 	public:
