@@ -1,5 +1,4 @@
-#include "core/crypto/base64.h"
-
+#include "base64.h"
 #include "core/3rdparty/cpp-base64/base64.h"
 
 namespace wk
