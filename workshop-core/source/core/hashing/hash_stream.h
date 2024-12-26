@@ -48,6 +48,13 @@ namespace wk::hash
 			hash_t<T>(*this, value);
 		}
 
+	public:
+		template<typename T>
+		static T combine(const T& seed, const T& value)
+		{
+			return value + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		}
+
 	protected:
 		virtual void update_hash(const uint8_t* data, size_t length) = 0;
 	};
