@@ -11,13 +11,13 @@ namespace wk::Geometry
 {
 	template<typename T1, typename T2>
 	float dist(const Point_t<T1>& p1, const Point_t<T2>& p2) {
-		return std::sqrt(std::pow(p1.x - p2.x, 2) + std::pow(p1.y - p2.y, 2));
+		return (float)std::sqrt(std::pow(p1.x - p2.x, 2) + std::pow(p1.y - p2.y, 2));
 	}
 
 	template<typename T>
 	float line_angle(const Line_t<T>& line)
 	{
-		return std::atan2(line.end.y - line.start.y, line.end.x - line.start.x);
+		return (float)std::atan2(line.end.y - line.start.y, line.end.x - line.start.x);
 	}
 
 	template<typename T>
@@ -27,11 +27,11 @@ namespace wk::Geometry
 
 		const Point_t<T>& midpoint = bisector.end;
 
-		T x1 = midpoint.x + half_length * std::cos(angle);
-		T y1 = midpoint.y + half_length * std::sin(angle);
+		T x1 = (T)(midpoint.x + half_length * std::cos(angle));
+		T y1 = (T)(midpoint.y + half_length * std::sin(angle));
 
-		T x2 = midpoint.x - half_length * std::cos(angle);
-		T y2 = midpoint.y - half_length * std::sin(angle);
+		T x2 = (T)(midpoint.x - half_length * std::cos(angle));
+		T y2 = (T)(midpoint.y - half_length * std::sin(angle));
 
 		return Triangle_t<T>(
 			bisector.start,

@@ -2,6 +2,7 @@
 
 #include "core/memory/memory.h"
 #include "core/preprocessor/api.h"
+#include "core/hashing/hash.h"
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -46,6 +47,19 @@ namespace wk
 			ty = m12;
 		};
 	};
+
+	namespace hash
+	{
+		template<>
+		struct Hash_t<wk::Matrix2D>
+		{
+			template<typename T>
+			static void update(wk::hash::HashStream<T>& stream, const wk::Matrix2D& matrix)
+			{
+				stream.update((const uint8_t*)matrix.elements, sizeof(matrix.elements));
+			}
+		};
+	}
 }
 
 #ifdef _MSC_VER

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/memory/memory.h"
+#include "core/hashing/hash.h"
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -45,6 +46,19 @@ namespace wk
 
 	using Rect = Rect_t<int>;
 	using RectF = Rect_t<float>;
+
+	namespace hash
+	{
+		template<typename ValueT>
+		struct Hash_t<Rect_t<ValueT>>
+		{
+			template<typename T>
+			static void update(wk::hash::HashStream<T>& stream, const Rect_t<ValueT>& rect)
+			{
+				stream.update((const uint8_t*)&rect.points, sizeof(rect.points));
+			}
+		};
+	}
 }
 
 #ifdef _MSC_VER

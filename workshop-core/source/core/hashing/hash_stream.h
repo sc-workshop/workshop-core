@@ -44,7 +44,7 @@ namespace wk::hash
 		template<
 			typename ValueT,
 			typename std::enable_if_t<
-			std::is_class_v<ValueT>
+				std::is_class_v<ValueT>
 			, bool> = true>
 		void update(const ValueT & value)
 		{
