@@ -24,7 +24,7 @@ function(wk_project_setup project_name)
     wk_set_global(WK_RELEASE "$<CONFIG:Release,RelWithDebInfo,MinSizeRel>")
 
     # build architectures
-    wk_set_global(WK_X86_64 "$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>")
+    wk_set_global(WK_X86_64 "$<OR:$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},AMD64>>")
     wk_set_global(WK_AARCH64 "$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},aarch64>")
 
     wk_set_global(WK_X64 "$<OR:${WK_X86_64},${WK_AARCH64}>")
