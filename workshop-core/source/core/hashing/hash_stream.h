@@ -24,6 +24,7 @@ namespace wk::hash
 
 		void update(const uint8_t* data, size_t length)
 		{
+			if (!length) return;
 			update_hash(data, length);
 		}
 
