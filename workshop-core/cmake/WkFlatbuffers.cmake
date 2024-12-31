@@ -8,7 +8,7 @@ function(wk_include_flatbuffers)
     FetchContent_Declare(
         flatbuffers
         GIT_REPOSITORY https://github.com/google/flatbuffers.git
-        GIT_TAG v24.3.25
+        GIT_TAG v24.12.23
     )
     FetchContent_MakeAvailable(flatbuffers)
     target_link_libraries(${wk_core_target} PUBLIC FlatBuffers::FlatBuffers)
