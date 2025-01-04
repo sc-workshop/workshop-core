@@ -1,9 +1,14 @@
 #include "core/image/raw_image.h"
-
-#include "core/memory/memory.h"
+#include <array>
 
 namespace wk
 {
+	RawImage::RawImage(const RawImage& other)
+		: RawImage(other.width(), other.height(), other.depth(), other.colorspace())
+	{
+		other.copy(*this);
+	}
+
 	RawImage::RawImage(
 		uint8_t* data,
 		uint16_t width, uint16_t height,
@@ -25,19 +30,17 @@ namespace wk
 		m_height = height;
 		m_type = Image::PixelDepthBaseTypeTable[(uint8_t)depth];
 
-		uint8_t pixel_size = PixelDepthTable[(uint16_t)depth].byte_count;
+		size_t data_length = Image::calculate_image_length(width, height, depth);
+		m_allocated_data = wk::CreateRef<MemoryStream>(data_length);
+		m_data = (uint8_t*)m_allocated_data->data();
 
-		m_allocated_data = Memory::allocate((width * height) * pixel_size);
-		m_data = m_allocated_data;
+		memset(m_allocated_data->data(), 0, data_length);
 	};
 
-	RawImage::~RawImage()
+	RawImage::RawImage(const ColorRGBA& color) : 
+		RawImage((uint8_t*)& color, 1, 1, Image::PixelDepth::RGBA8, Image::ColorSpace::Linear)
 	{
-		if (m_allocated_data)
-		{
-			free(m_allocated_data);
-		}
-	};
+	}
 
 	size_t RawImage::data_length() const
 	{
@@ -67,7 +70,7 @@ namespace wk
 	void RawImage::copy(RawImage& image) const
 	{
 		size_t data_size = Image::calculate_image_length(image.width(), image.height(), image.depth());
-		uint8_t* data = nullptr;
+		wk::Ref<MemoryStream> final_buffer;
 
 		Image::PixelDepth current_depth = m_depth;
 		if (image.width() != m_width || image.height() != m_height)
@@ -94,49 +97,121 @@ namespace wk
 				break;
 			}
 
-			uint8_t* base_depth_data = nullptr;
-
+			wk::Ref<MemoryStream> depth_buffer;
 			if (current_depth != m_depth)
 			{
-				base_depth_data = Memory::allocate(Image::calculate_image_length(m_width, m_height, current_depth));
-				Image::remap(m_data, base_depth_data, m_width, m_height, m_depth, current_depth);
+				depth_buffer = wk::CreateRef<MemoryStream>(Image::calculate_image_length(m_width, m_height, current_depth));
+				Image::remap(m_data, (uint8_t*)depth_buffer->data(), m_width, m_height, m_depth, current_depth);
 			}
 
-			data = Memory::allocate(Image::calculate_image_length(image.width(), image.height(), m_depth));
+			final_buffer = CreateRef<MemoryStream>(Image::calculate_image_length(image.width(), image.height(), m_depth));
 			Image::resize(
-				base_depth_data ? base_depth_data : m_data, data,
+				depth_buffer ? (uint8_t*)depth_buffer->data() : m_data, (uint8_t*)final_buffer->data(),
 				m_width, m_height,
 				image.width(), image.height(),
 				m_type, m_space
 			);
-
-			if (base_depth_data)
-			{
-				Memory::free(base_depth_data);
-			}
 		}
 
 		if (image.depth() != m_depth)
 		{
 			Image::remap(
-				data ? data : m_data, image.data(),
+				final_buffer ? (uint8_t*)final_buffer->data() : m_data, image.data(),
 				image.width(), image.height(),
 				current_depth, image.depth()
 			);
-		}
-		else
-		{
-			Memory::copy(data ? data : m_data, image.data(), data_size);
+			return;
 		}
 
-		if (data)
-		{
-			Memory::free(data);
-		}
+		Memory::copy(
+			final_buffer ? (uint8_t*)final_buffer->data() : m_data, image.data(), data_size
+		);
 	};
 
 	void RawImage::write(Stream& buffer)
 	{
 		buffer.write(m_data, data_length());
 	};
+
+	Image::T* RawImage::at(Image::SizeT x, Image::SizeT y) const
+	{
+		return m_data + (y * m_width + x) * PixelDepthTable[(std::uint16_t)m_depth].byte_count;
+	};
+
+	void RawImage::extract_channel(RawImageRef& output, uint8_t channel) const
+	{
+		if (is_complex()) return;
+
+		output = CreateRef<RawImage>(
+			m_width, m_height,
+			Image::PixelDepth::LUMINANCE8,
+			m_space
+		);
+
+		for (Image::SizeT y = 0; m_height > y; y++)
+		{
+			for (Image::SizeT x = 0; m_width > x; x++)
+			{
+				Image::T* pixel = at(x, y);
+				Image::T* output_pixel = output->at(x, y);
+				*output_pixel = pixel[channel];
+			}
+		}
+	};
+
+	Image::Bound RawImage::bound() const
+	{
+		if (base_type() != Image::BasePixelType::L)
+		{
+			throw wk::Exception("Invalid image type");
+		}
+
+		Image::Bound result(
+			width(), 0,
+			0, height()
+		);
+
+		bool valid = false;
+		for (Image::SizeT y = 0; m_height > y; y++)
+		{
+			for (Image::SizeT x = 0; m_width > x; x++)
+			{
+				if (0 >= at<uint8_t>(x, y)) continue;
+
+				result.left = std::min<uint16_t>(result.left, x);
+				result.right = std::max<uint16_t>(result.right, x);
+				result.bottom = std::min<uint16_t>(result.bottom, y);
+				result.top = std::max<uint16_t>(result.top, y);
+
+				valid = true;
+			}
+		}
+
+		if (!valid) return Image::Bound();
+		return Image::Bound(
+			result.left, result.bottom,
+			(uint16_t)std::abs(result.left - result.right) + 1, 
+			(uint16_t)std::abs(result.bottom - result.top) + 1
+		);
+	}
+
+	RawImageRef RawImage::crop(const Image::Bound& bound) const
+	{
+		RawImageRef result = CreateRef<RawImage>(
+			bound.width, bound.height,
+			m_depth, m_space
+		);
+
+		for (uint16_t y = 0; bound.height > y; y++)
+		{
+			for (uint16_t x = 0; bound.width > x; x++)
+			{
+				Image::T* pixel = at(bound.x + x, bound.y + y);
+				Image::T* output_pixel = result->at(x, y);
+				Memory::copy<Image::T>(pixel, output_pixel, PixelDepthTable[(std::uint16_t)m_depth].byte_count);
+			}
+		}
+
+		return result;
+	}
 }

@@ -2,11 +2,20 @@
 
 #include "core/io/stream.h"
 #include "core/preprocessor/api.h"
+#include "core/math/point.h"
+#include "core/math/rect.h"
+#include "core/hashing/ncrypto/xxhash.h"
 
 namespace wk
 {
 	class WORKSHOP_API Image
 	{
+	public:
+		using T = uint8_t;
+		using SizeT = uint16_t;
+		using Size = Point_t<SizeT>;
+		using Bound = Rect_t<SizeT>;
+
 	public:
 		Image() = default;
 		virtual ~Image() = default;
@@ -51,21 +60,21 @@ namespace wk
 		};
 
 	public:
-		static size_t calculate_image_length(std::uint16_t width, std::uint16_t height, PixelDepth depth);
+		static size_t calculate_image_length(SizeT width, SizeT height, PixelDepth depth);
 
 		static bool check_depth_base_type(BasePixelType type, PixelDepth depth);
 
 		static void resize(
 			std::uint8_t* input_data, std::uint8_t* output_data,
-			std::uint16_t width, std::uint16_t height,
-			std::uint16_t new_width, std::uint16_t new_height,
+			SizeT width, SizeT height,
+			SizeT new_width, SizeT new_height,
 			BasePixelType type, ColorSpace space,
 			bool premultiply = true
 		);
 
 		static void remap(
 			std::uint8_t* input_data, std::uint8_t* output_data,
-			std::uint16_t width, std::uint16_t height,
+			SizeT width, SizeT height,
 			PixelDepth source, PixelDepth destination
 		);
 
@@ -73,20 +82,44 @@ namespace wk
 		virtual void write(Stream& buffer) = 0;
 
 	public:
-		virtual std::uint16_t width() const;
-		virtual std::uint16_t height() const;
+		virtual SizeT width() const;
+		virtual SizeT height() const;
 
 		virtual BasePixelType base_type() const = 0;
 		virtual ColorSpace colorspace() const = 0;
 		virtual PixelDepth depth() const = 0;
 
 		virtual std::size_t data_length() const = 0;
-		virtual std::uint8_t* data() const = 0;
+		virtual T* data() const = 0;
 
 		virtual bool is_compressed() const = 0;
 
+		virtual size_t hash() const;
+
+	public:
+		uint8_t channels() const;
+		bool is_complex() const;
+		Image::Size size() const;
+
 	protected:
-		std::uint16_t m_width = 0;
-		std::uint16_t m_height = 0;
+		SizeT m_width = 0;
+		SizeT m_height = 0;
 	};
+
+	namespace hash
+	{
+		template<>
+		struct Hash_t<Image>
+		{
+			template<typename T>
+			static void update(wk::hash::HashStream<T>& stream, const Image& image)
+			{
+				stream.update(image.depth());
+				stream.update(image.colorspace());
+				stream.update(image.width());
+				stream.update(image.height());
+				stream.update(image.data(), image.data_length());
+			}
+		};
+	}
 }

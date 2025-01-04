@@ -56,6 +56,7 @@ namespace wk
 
 	using Point = Point_t<int>;
 	using PointF = Point_t<float>;
+	using ColorLA = Point_t<uint8_t>;
 }
 
 #ifdef _MSC_VER

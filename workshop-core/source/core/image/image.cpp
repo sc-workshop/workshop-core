@@ -13,10 +13,10 @@ namespace wk
 		{4, 8, 8, 8, 8},			//RGBA8
 		{2, 4, 4, 4, 4},			//RGBA4
 		{2, 5, 5, 5, 1},			//RGB5_A1
-		{3, 8, 8, 8, 0xFF},			//RGB8
-		{2, 5, 6, 5, 0xFF},			//RGB565
-		{2, 8, 0xFF, 0xFF, 8},		//LUMINANCE8_ALPHA8
-		{1, 8, 0xFF, 0xFF, 0xFF},	//LUMINANCE8
+		{3, 8, 8, 8, 0},			//RGB8
+		{2, 5, 6, 5, 0},			//RGB565
+		{2, 8, 0, 0, 8},			//LUMINANCE8_ALPHA8
+		{1, 8, 0, 0, 0},			//LUMINANCE8
 	};
 
 	const Image::BasePixelType Image::PixelDepthBaseTypeTable[] =
@@ -33,7 +33,7 @@ namespace wk
 
 #pragma region Static Functions
 	//			<---------------- Static members ---------------->
-	std::size_t Image::calculate_image_length(std::uint16_t width, std::uint16_t height, PixelDepth depth)
+	std::size_t Image::calculate_image_length(SizeT width, SizeT height, PixelDepth depth)
 	{
 		size_t pixel_size = PixelDepthTable[(std::uint16_t)depth].byte_count;
 		return ((size_t)width * height) * pixel_size;
@@ -49,8 +49,8 @@ namespace wk
 
 	void Image::resize(
 		std::uint8_t* input_data, std::uint8_t* output_data,
-		std::uint16_t width, std::uint16_t height,
-		std::uint16_t new_width, std::uint16_t new_height,
+		SizeT width, SizeT height,
+		SizeT new_width, SizeT new_height,
 		BasePixelType type, ColorSpace space,
 		bool premultiply
 	)
@@ -67,7 +67,7 @@ namespace wk
 
 	void Image::remap(
 		std::uint8_t* input_data, std::uint8_t* output_data,
-		std::uint16_t width, std::uint16_t height,
+		SizeT width, SizeT height,
 		Image::PixelDepth source, Image::PixelDepth destination
 	)
 	{
@@ -99,7 +99,7 @@ namespace wk
 			{
 				std::uint8_t bit_index = 0;
 
-				if (input_pixel_info.r_bits != 0xFF)
+				if (input_pixel_info.r_bits)
 				{
 					uint64_t r_bits_mask = (uint64_t)pow(2, input_pixel_info.r_bits) - 1;
 					r_channel = static_cast<std::uint8_t>(r_bits_mask & input_pixel_buffer);
@@ -112,7 +112,7 @@ namespace wk
 					bit_index += input_pixel_info.r_bits;
 				}
 
-				if (input_pixel_info.g_bits != 0xFF)
+				if (input_pixel_info.g_bits)
 				{
 					std::uint64_t g_bits_mask = (std::uint64_t)pow(2, input_pixel_info.g_bits) - 1;
 					g_channel = static_cast<std::uint8_t>(((g_bits_mask << bit_index) & input_pixel_buffer) >> bit_index);
@@ -129,7 +129,7 @@ namespace wk
 					g_channel = r_channel;
 				}
 
-				if (input_pixel_info.b_bits != 0xFF)
+				if (input_pixel_info.b_bits)
 				{
 					std::uint64_t b_bits_mask = (std::uint64_t)pow(2, input_pixel_info.b_bits) - 1;
 					b_channel = static_cast<std::uint8_t>(((b_bits_mask << bit_index) & input_pixel_buffer) >> bit_index);
@@ -146,7 +146,7 @@ namespace wk
 					b_channel = g_channel;
 				}
 
-				if (input_pixel_info.a_bits != 0xFF)
+				if (input_pixel_info.a_bits)
 				{
 					std::uint64_t a_bits_mask = (std::uint64_t)pow(2, input_pixel_info.a_bits) - 1;
 					a_channel = static_cast<std::uint8_t>(((a_bits_mask << bit_index) & input_pixel_buffer) >> bit_index);
@@ -167,7 +167,7 @@ namespace wk
 			{
 			case Image::PixelDepth::LUMINANCE8_ALPHA8:
 			case Image::PixelDepth::LUMINANCE8:
-				r_channel = (r_channel * g_channel * b_channel) / 3;
+				r_channel = (r_channel + g_channel + b_channel) / 3;
 				break;
 			default:
 				break;
@@ -175,31 +175,25 @@ namespace wk
 
 			// Pixel Encoding
 			{
-				std::uint8_t bit_index = output_pixel_info.byte_count * 8;
+				std::uint8_t bit_offset = 0;
 
-				std::vector<std::tuple<uint8_t, uint8_t, uint8_t>> channels = { 
-					{input_pixel_info.r_bits, output_pixel_info.r_bits, r_channel},
-					{input_pixel_info.g_bits, output_pixel_info.g_bits, g_channel},
-					{input_pixel_info.b_bits, output_pixel_info.b_bits, b_channel},
-					{input_pixel_info.a_bits, output_pixel_info.a_bits, a_channel},
+				std::vector<std::tuple<uint8_t, uint8_t>> channels = { 
+					{output_pixel_info.r_bits, r_channel},
+					{output_pixel_info.g_bits, g_channel},
+					{output_pixel_info.b_bits, b_channel},
+					{output_pixel_info.a_bits, a_channel},
 				};
 
 				for (auto& channel : channels)
 				{
-					auto& [input, output, value] = channel;
+					auto& [bits, value] = channel;
 
-					if (output != 0xFF)
+					if (bits)
 					{
-						bit_index -= output;
-						std::int8_t bit_offset = 0;
-						
-						if (input != 0xFF)
-						{
-							bit_offset = (input - output) >= 0 ? input - output : 0;
-						}
-						
-						std::uint64_t bits_mask = (std::uint64_t)((pow(2, output) - 1)) << bit_offset;
-						output_pixel_buffer |= ((value & bits_mask) >> bit_offset) << bit_index;
+						std::uint64_t bits_mask = (std::uint64_t)((pow(2, bits) - 1));
+						output_pixel_buffer |= ((value & bits_mask) << bit_offset);
+
+						bit_offset += bits;
 					}
 				}
 			}
@@ -212,13 +206,57 @@ namespace wk
 		}
 	}
 
-	std::uint16_t Image::width() const
+	Image::SizeT Image::width() const
 	{
 		return m_width;
 	};
 
-	std::uint16_t Image::height() const
+	Image::SizeT Image::height() const
 	{
 		return m_height;
 	};
+
+	uint8_t Image::channels() const
+	{
+		switch (base_type())
+		{
+		case BasePixelType::RGBA:
+			return 4;
+		case BasePixelType::RGB:
+			return 3;
+		case BasePixelType::LA:
+			return 2;
+		case BasePixelType::L:
+			return 1;
+		default:
+			throw Exception();
+		}
+	}
+
+	bool Image::is_complex() const
+	{
+		switch (depth())
+		{
+		case PixelDepth::RGBA8:
+		case PixelDepth::RGB8:
+		case PixelDepth::LUMINANCE8_ALPHA8:
+		case PixelDepth::LUMINANCE8:
+			return false;
+		default:
+			return true;
+		}
+	}
+
+	size_t Image::hash() const
+	{
+		wk::hash::XxHash hash;
+		hash.update(*this);
+	
+		return hash.digest();
+	}
+
+	Image::Size Image::size() const
+	{
+		return { m_width, m_height };
+	}
 }

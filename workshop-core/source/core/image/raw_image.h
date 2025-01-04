@@ -2,13 +2,20 @@
 
 #include "core/image/image.h"
 #include "core/preprocessor/api.h"
+#include "core/math/color_rgba.h"
+#include "core/memory/ref.h"
+#include "core/math/rect.h"
+#include "core/io/memory_stream.h"
 
 namespace wk
 {
+	class RawImage;
+	using RawImageRef = Ref<RawImage>;
+
 	class WORKSHOP_API RawImage : public Image
 	{
 	public:
-		RawImage(const RawImage&) = delete;
+		RawImage(const RawImage&);
 
 		RawImage(
 			std::uint8_t* data,
@@ -23,7 +30,9 @@ namespace wk
 			Image::ColorSpace space = Image::ColorSpace::Linear
 		);
 
-		virtual ~RawImage();
+		RawImage(const ColorRGBA& color);
+
+		virtual ~RawImage() = default;
 
 	public:
 		virtual std::size_t data_length() const;
@@ -37,8 +46,20 @@ namespace wk
 
 	public:
 		void copy(RawImage& image) const;
-
 		void write(Stream& buffer);
+
+		void extract_channel(RawImageRef& output, uint8_t channel) const;
+		Image::T* at(Image::SizeT x, Image::SizeT y) const;
+
+		template<typename T>
+		T& at(Image::SizeT x, Image::SizeT y) const
+		{
+			return *reinterpret_cast<T*>(at(x, y));
+		}
+
+		Image::Bound bound() const;
+
+		RawImageRef crop(const Image::Bound& bound) const;
 
 	private:
 		Image::BasePixelType m_type;
@@ -46,6 +67,6 @@ namespace wk
 		Image::PixelDepth m_depth;
 
 		std::uint8_t* m_data = nullptr;
-		std::uint8_t* m_allocated_data = nullptr;
+		wk::Ref<MemoryStream> m_allocated_data;
 	};
 }
