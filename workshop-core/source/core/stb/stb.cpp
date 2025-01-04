@@ -108,13 +108,14 @@ namespace wk
 
 		void write_image(RawImage& image, ImageFormat format, Stream& output)
 		{
-			uint8_t* buffer = nullptr;
+			wk::Ref<MemoryStream> temp_buffer;
 
 			uint8_t channels = 0;
 
 			Image::BasePixelType source_type = image.base_type();
 			switch (source_type)
 			{
+			
 			case Image::BasePixelType::RGBA:
 				channels = 4;
 				break;
@@ -152,37 +153,42 @@ namespace wk
 
 			if (image.depth() != destination_depth)
 			{
-				buffer = Memory::allocate(Image::calculate_image_length(image.width(), image.height(), destination_depth));
+				temp_buffer = CreateRef<MemoryStream>(Image::calculate_image_length(image.width(), image.height(), destination_depth));
 
 				Image::remap(
-					image.data(), buffer,
+					image.data(), (uint8_t*)temp_buffer->data(),
 					image.width(), image.height(),
 					image.depth(), destination_depth
 				);
+			}
+
+			const void* data = nullptr;
+			if (temp_buffer)
+			{
+				data = temp_buffer->data();
+			}
+			else
+			{
+				data = image.data();
 			}
 
 			int result = 0;
 			switch (format)
 			{
 			case ImageFormat::PNG:
-				result = stbi_write_png_to_func(&stbi_sc_io_write, (void*)&output, image.width(), image.height(), channels, buffer ? buffer : image.data(), 0);
+				result = stbi_write_png_to_func(&stbi_sc_io_write, (void*)&output, image.width(), image.height(), channels, data, 0);
 				break;
 			case stb::ImageFormat::BMP:
-				result = stbi_write_bmp_to_func(&stbi_sc_io_write, (void*)&output, image.width(), image.height(), channels, buffer ? buffer : image.data());
+				result = stbi_write_bmp_to_func(&stbi_sc_io_write, (void*)&output, image.width(), image.height(), channels, data);
 				break;
 			case stb::ImageFormat::TGA:
-				result = stbi_write_tga_to_func(&stbi_sc_io_write, (void*)&output, image.width(), image.height(), channels, buffer ? buffer : image.data());
+				result = stbi_write_tga_to_func(&stbi_sc_io_write, (void*)&output, image.width(), image.height(), channels, data);
 				break;
 			case stb::ImageFormat::JPEG:
-				result = stbi_write_jpg_to_func(&stbi_sc_io_write, (void*)&output, image.width(), image.height(), channels, buffer ? buffer : image.data());
+				result = stbi_write_jpg_to_func(&stbi_sc_io_write, (void*)&output, image.width(), image.height(), channels, data);
 				break;
 			default:
 				break;
-			}
-
-			if (buffer)
-			{
-				free(buffer);
 			}
 
 			if (result == 0)
