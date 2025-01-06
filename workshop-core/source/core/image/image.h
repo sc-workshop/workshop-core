@@ -103,6 +103,7 @@ namespace wk
 		uint8_t channels() const;
 		bool is_complex() const;
 		Image::Size size() const;
+		size_t pixel_size() const;
 
 	protected:
 		SizeT m_width = 0;

@@ -233,4 +233,9 @@ namespace wk
 	{
 		return { m_width, m_height };
 	}
+
+	size_t Image::pixel_size() const
+	{
+		return Image::PixelDepthTable[(uint16_t)depth()].byte_count;
+	}
 }

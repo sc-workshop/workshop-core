@@ -42,7 +42,7 @@ namespace wk::Geometry
 
 	template<typename T1, typename T2>
 	float line_length(const Point_t<T1>& a, const Point_t<T2>& b) {
-		return std::sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
+		return (float)std::sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
 	}
 
 	template<typename T1, typename T2, typename T3>
