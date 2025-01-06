@@ -15,9 +15,13 @@ namespace wk::Geometry
 	};
 
 	template<typename T>
-	PolygonType get_polygon_type(std::vector<Point_t<T>> points)
+	PolygonType get_polygon_type(const std::vector<Point_t<T>>& points)
 	{
+		if (points.size() < 3)
+			throw Exception("Polygon must have at least 3 points");
+
 		bool sign = false;
+		bool first = true;
 		for (size_t i = 0; points.size() > i; i++)
 		{
 			Point_t<T> p1 = points[i];
@@ -25,9 +29,10 @@ namespace wk::Geometry
 			Point_t<T> p3 = points[(i + 2) % points.size()];
 			float cross = cross_product(p1, p2, p3);
 
-			if (i == 0)
+			if (first)
 			{
-				sign = cross > 0;
+				sign = cross >= 0;
+				first = false;
 			}
 			else if (sign != cross > 0)
 			{
