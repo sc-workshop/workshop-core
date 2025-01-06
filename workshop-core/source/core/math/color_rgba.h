@@ -37,6 +37,19 @@ namespace wk
 	};
 
 	using ColorRGBA = ColorRGBA_t<uint8_t>;
+
+	namespace hash
+	{
+		template<typename V>
+		struct Hash_t<wk::ColorRGBA_t<V>>
+		{
+			template<typename T>
+			static void update(wk::hash::HashStream<T>& stream, const wk::ColorRGBA_t<V>& color)
+			{
+				stream.update((uint8_t*)&color.channels, sizeof(color.channels));
+			}
+		};
+	}
 }
 
 #ifdef _MSC_VER
