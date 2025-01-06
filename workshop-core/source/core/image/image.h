@@ -6,6 +6,8 @@
 #include "core/math/rect.h"
 #include "core/hashing/ncrypto/xxhash.h"
 
+#include <array>
+
 namespace wk
 {
 	class WORKSHOP_API Image
@@ -37,6 +39,7 @@ namespace wk
 
 		struct PixelDepthInfo
 		{
+			std::array<uint8_t, 4> order;
 			std::uint8_t byte_count;
 			std::uint8_t r_bits;
 			std::uint8_t g_bits;
