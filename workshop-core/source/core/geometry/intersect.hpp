@@ -8,7 +8,8 @@
 namespace wk::Geometry
 {
 	// https://flassari.is/2008/11/line-line-intersection-in-cplusplus
-	std::optional<PointF> line_intersect(const LineF l1, const LineF l2)
+	template<typename T>
+	std::optional<Point_t<T>> line_intersect(const Line_t<T> l1, const Line_t<T> l2)
 	{
 		float x1 = l1.start.x, x2 = l1.end.x, x3 = l2.start.x, x4 = l2.end.x;
 		float y1 = l1.start.y, y2 = l1.end.y, y3 = l2.start.y, y4 = l2.end.y;
@@ -41,7 +42,8 @@ namespace wk::Geometry
 		return PointF(x, y);
 	}
 
-	std::optional<std::tuple<size_t, size_t, PointF>> line_intersect(const std::vector<Point>& polygon, const LineF line)
+	template<typename T>
+	std::optional<std::tuple<size_t, size_t, Point_t<T>>> line_intersect(const std::vector<Point>& polygon, const Line_t<T> line)
 	{
 		size_t length = polygon.size();
 		for (size_t i = 0; length > i; i++)
