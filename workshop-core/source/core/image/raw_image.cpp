@@ -38,8 +38,9 @@ namespace wk
 	};
 
 	RawImage::RawImage(const ColorRGBA& color) : 
-		RawImage((uint8_t*)& color, 1, 1, Image::PixelDepth::RGBA8, Image::ColorSpace::Linear)
+		RawImage(1, 1, Image::PixelDepth::RGBA8, Image::ColorSpace::Linear)
 	{
+		at<ColorRGBA>(0, 0) = color;
 	}
 
 	size_t RawImage::data_length() const
