@@ -118,7 +118,6 @@ namespace wk
 			// Pixel Decoding
 			{
 				uint8_t bit_index = 0;
-				uint8_t channel_index = 0;
 
 				for (const uint8_t& channel_index : input_pixel_info.order)
 				{

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/memory/memory.h"
+#include "core/hashing/hash.h"
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -34,6 +35,16 @@ namespace wk
 			b = blue;
 			a = alpha;
 		};
+
+		bool operator==(const ColorRGBA_t<T>& other) const
+		{
+			return std::memcmp(&channels, &other.channels, sizeof(channels)) == 0;
+		}
+
+		bool operator!=(const ColorRGBA_t<T>& other) const
+		{
+			return !(*this == other);
+		}
 	};
 
 	using ColorRGBA = ColorRGBA_t<uint8_t>;
