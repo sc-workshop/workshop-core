@@ -15,8 +15,8 @@ namespace wk
 		{{3, 2, 1, 0}, 2, 5, 5, 5, 1},			//RGB5_A1
 		{{0, 1, 2, 0xFF}, 3, 8, 8, 8, 0},		//RGB8
 		{{3, 2, 1, 0xFF}, 2, 5, 6, 5, 0},		//RGB565
-		{{0, 3, 0xFF, 0xFF}, 2, 8, 0, 0, 8},	//LUMINANCE8_ALPHA8
-		{{0, 0xFF, 0xFF, 0xFF}, 1, 8, 0, 0, 0},	//LUMINANCE8
+		{{0, 0xFF, 0xFF, 3}, 2, 8, 0, 0, 8},			//LUMINANCE8_ALPHA8
+		{{0, 0xFF, 0xFF, 0xFF}, 1, 8, 0, 0, 0},		//LUMINANCE8
 	};
 
 	const Image::BasePixelType Image::PixelDepthBaseTypeTable[] =
@@ -121,6 +121,8 @@ namespace wk
 
 				for (const uint8_t& channel_index : input_pixel_info.order)
 				{
+					if (channel_index >= 0xFF) continue;
+
 					const Channel& channel = _channels[channel_index];
 
 					if (channel.input_bits)
@@ -143,6 +145,17 @@ namespace wk
 			}
 
 			// Some Pixel Type Specific actions
+
+			switch (source)
+			{
+			case Image::PixelDepth::LUMINANCE8_ALPHA8:
+			case Image::PixelDepth::LUMINANCE8:
+				b_channel = g_channel = r_channel;
+				break;
+			default:
+				break;
+			}
+
 			switch (destination)
 			{
 			case Image::PixelDepth::LUMINANCE8_ALPHA8:
@@ -159,6 +172,8 @@ namespace wk
 
 				for (const uint8_t& channel_index : output_pixel_info.order)
 				{
+					if (channel_index >= 0xFF) continue;
+					
 					const Channel& channel = _channels[channel_index];
 
 					if (channel.output_bits)
