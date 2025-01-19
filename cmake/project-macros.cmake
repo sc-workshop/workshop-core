@@ -29,6 +29,10 @@ function(wk_project_setup project_name)
 
     wk_set_global(WK_X64 "$<OR:${WK_X86_64},${WK_AARCH64}>")
 
+    wk_set_global(WK_PREFERRED_ISA "${WK_PREFERRED_CPU_FEATURES}")
+    wk_set_global(WK_PREFERRED_LATEST_ISA "$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>")
+    wk_set_global(WK_PREFERRED_OLDEST_ISA "$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},DEFAULT>")
+
     # compile flags
     target_compile_options(${project_name} PRIVATE
         $<$<AND:${WK_MSVC},${WK_RELEASE}>: /Ox /GF /Gy /GS- /Ob2 /Oi /Ot> # Settings for release builds
