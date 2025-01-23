@@ -27,7 +27,7 @@ function(wk_project_setup project_name)
     wk_set_global(WK_X86_64 "$<OR:$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},AMD64>>")
     wk_set_global(WK_AARCH64 "$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},aarch64>")
 
-    wk_set_global(WK_X64 "$<OR:${WK_X86_64},${WK_AARCH64}>")
+    wk_set_global(WK_X64 "$<OR:${WK_X86_64},${WK_AARCH64}>")    
 
     wk_set_global(WK_PREFERRED_ISA "${WK_PREFERRED_CPU_FEATURES}")
     wk_set_global(WK_PREFERRED_LATEST_ISA "$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>")
@@ -46,7 +46,7 @@ function(wk_project_setup project_name)
     # compile defines
     target_compile_definitions(
             ${project_name} PRIVATE
-            $<${WK_MSVC}: _CRT_SECURE_NO_WARNINGS>
+            $<${WK_MSVC}: _CRT_SECURE_NO_WARNINGS _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING>
     )
 
 
