@@ -3,6 +3,8 @@
 #include "core/memory/memory.h"
 #include "core/hashing/hash.h"
 
+#include <stdint.h>
+
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4201)
@@ -35,6 +37,16 @@ namespace wk
 			b = blue;
 			a = alpha;
 		};
+
+		uint32_t as_value() const
+		{
+			return *(uint32_t*)this;
+		}
+		
+		void set_value(uint32_t value) const
+		{
+			*(uint32_t*)this = value;
+		}
 
 		bool operator==(const ColorRGBA_t<T>& other) const
 		{
