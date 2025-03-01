@@ -2,7 +2,7 @@ include(FetchContent)
 include(scripts/flatbuffer_generate)
 
 function(wk_include_flatbuffers)
-    set(FLATBUFFERS_BUILD_FLATC OFF)
+    set(FLATBUFFERS_BUILD_FLATC ON)
     set(FLATBUFFERS_BUILD_SHAREDLIB ${WK_BUILD_SHARED})
     set(FLATBUFFERS_BUILD_TESTS OFF)
     FetchContent_Declare(
