@@ -91,7 +91,7 @@ namespace wk
 
 		bool is_open() const override
 		{
-			return true;
+			return m_file.good();
 		};
 
 		bool is_readable() const override
@@ -191,7 +191,7 @@ namespace wk
 
 		bool is_open() const override
 		{
-			return true;
+			return m_file.good();
 		};
 
 		bool is_readable() const override

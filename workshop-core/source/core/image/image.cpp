@@ -118,12 +118,11 @@ namespace wk
 			// Pixel Decoding
 			{
 				uint8_t bit_index = 0;
+				uint8_t channel_index = 0;
 
-				for (const uint8_t& channel_index : input_pixel_info.order)
+				for (const uint8_t& ordered_index : input_pixel_info.order)
 				{
-					if (channel_index >= 0xFF) continue;
-
-					const Channel& channel = _channels[channel_index];
+					const Channel& channel = _channels[ordered_index == 0xFF ? channel_index : ordered_index];
 
 					if (channel.input_bits)
 					{
@@ -141,6 +140,8 @@ namespace wk
 					{
 						channel.value = channel.default_value;
 					}
+
+					channel_index++;
 				}
 			}
 
