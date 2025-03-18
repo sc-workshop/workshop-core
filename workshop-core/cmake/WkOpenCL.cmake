@@ -1,12 +1,19 @@
 function(wk_include_opencl)
     set(OPENCL_HEADERS_BUILD_CXX_TESTS OFF)
+    set(OPENCL_SDK_BUILD_UTILITY_LIBRARIES OFF)
+    set(DEPENDENCIES_FORCE_DOWNLOAD ON CACHE INTERNAL "")
     FetchContent_Declare(
         OpenCL
-        GIT_REPOSITORY https://github.com/KhronosGroup/OpenCL-Headers.git
+        GIT_REPOSITORY https://github.com/KhronosGroup/OpenCL-SDK.git
         GIT_TAG v2024.10.24
     )
     FetchContent_MakeAvailable(OpenCL)
-    target_link_libraries(${wk_core_target} PUBLIC OpenCL::Headers)
+    target_link_libraries(
+        ${wk_core_target} PUBLIC 
+        OpenCL::OpenCL
+        OpenCL::HeadersCpp
+        #OpenCL::SDKCpp
+    )
 endfunction()
 
 #
@@ -45,8 +52,6 @@ function(wk_create_opencl_target)
     endforeach()
 
     set(GENERATOR_TARGET "${CL_NAME}_cl_gen")
-    set(GENERATOR_COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${CL_NAME}_command.lock")
-
     add_custom_target(${GENERATOR_TARGET} 
         DEPENDS ${sources}
         SOURCES ${sources}

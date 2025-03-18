@@ -41,12 +41,15 @@ endfunction()
 #                     useful if the source file is a text file and we want to use the file contents
 #                     as string. But the size variable holds size of the byte array without this
 #                     null byte.
+#   OTHER_DATA      - Other text that will be inserted at the end
+# 
 # Usage:
 #   bin2h(SOURCE_FILE "Logo.png" HEADER_FILE "Logo.h" VARIABLE_NAME "LOGO_PNG")
 function(wk_bin2h)
     set(options APPEND NULL_TERMINATE)
     set(oneValueArgs SOURCE_FILE VARIABLE_NAME HEADER_FILE)
-    cmake_parse_arguments(BIN2H "${options}" "${oneValueArgs}" "" ${ARGN})
+    set(multiValueArgs OTHER_DATA)
+    cmake_parse_arguments(PARSE_ARGV 0 BIN2H "${options}" "${oneValueArgs}" "${multiValueArgs}")
 
     # reads source file contents as hex string
     file(READ ${BIN2H_SOURCE_FILE} hexString HEX)
@@ -66,15 +69,16 @@ function(wk_bin2h)
     # removes trailing comma
     string(REGEX REPLACE ", $" "" arrayValues ${arrayValues})
 
-    # converts the variable name into proper C identifier
-    string(MAKE_C_IDENTIFIER "${BIN2H_VARIABLE_NAME}" BIN2H_VARIABLE_NAME)
-    string(TOUPPER "${BIN2H_VARIABLE_NAME}" BIN2H_VARIABLE_NAME)
-
     # declares byte array and the length variables
-    set(arrayDefinition "const unsigned char ${BIN2H_VARIABLE_NAME}[] = { ${arrayValues} };")
-    set(arraySizeDefinition "const size_t ${BIN2H_VARIABLE_NAME}_SIZE = ${arraySize};")
+    set(arrayHeader "#pragma once\n#include <string>")
+    set(arrayDefinition "static const std::string ${BIN2H_VARIABLE_NAME} = { \n${arrayValues}\n };")
+    set(arrayOtherData "")
 
-    set(declarations "${arrayDefinition}\n\n${arraySizeDefinition}\n\n")
+    foreach(line ${BIN2H_OTHER_DATA})
+        string(APPEND arrayOtherData "${line};\n")
+    endforeach()
+
+    set(declarations "${arrayHeader}\n\n${arrayDefinition}\n\n${arrayOtherData}")
     if(BIN2H_APPEND)
         file(APPEND ${BIN2H_HEADER_FILE} "${declarations}")
     else()
