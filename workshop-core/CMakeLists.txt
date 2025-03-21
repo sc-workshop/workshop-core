@@ -4,6 +4,12 @@
 file(GLOB_RECURSE HEADERS source/*.h source/*.hpp)
 file(GLOB_RECURSE SOURCES source/*.cpp)
 
+# Remove OpenCL source by default
+if (NOT ${WK_USE_OPENCL})
+    file(GLOB_RECURSE CL_SOURCE source/core/parallel/cl/*.cpp)
+    list(REMOVE_ITEM SOURCES ${CL_SOURCE})
+endif()
+
 # choosing build type
 if(WK_BUILD_SHARED)
     # shared library

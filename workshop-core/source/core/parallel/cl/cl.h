@@ -30,7 +30,7 @@ namespace wk::parallel
 		const cl::Context& context() const { return m_context; }
 
 	public:
-		cl::CommandQueue create_queque() const;
+		cl::CommandQueue create_queue() const;
 
 		operator cl::Context&();
 

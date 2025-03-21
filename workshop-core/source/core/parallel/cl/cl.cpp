@@ -37,7 +37,7 @@ namespace wk::parallel
         m_available = m_device.getInfo<CL_DEVICE_AVAILABLE>();
 	}
 
-    cl::CommandQueue OpenCL::create_queque() const
+    cl::CommandQueue OpenCL::create_queue() const
     {
         return cl::CommandQueue{ context(), device() };
     }

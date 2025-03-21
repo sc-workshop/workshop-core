@@ -2,6 +2,7 @@ function(wk_include_opencl)
     set(OPENCL_HEADERS_BUILD_CXX_TESTS OFF)
     set(OPENCL_SDK_BUILD_UTILITY_LIBRARIES OFF)
     set(DEPENDENCIES_FORCE_DOWNLOAD ON CACHE INTERNAL "")
+    set(WK_USE_OPENCL ON CACHE INTERNAL "")
     FetchContent_Declare(
         OpenCL
         GIT_REPOSITORY https://github.com/KhronosGroup/OpenCL-SDK.git
@@ -12,7 +13,13 @@ function(wk_include_opencl)
         ${wk_core_target} PUBLIC 
         OpenCL::OpenCL
         OpenCL::HeadersCpp
-        #OpenCL::SDKCpp
+    )
+
+    # Add OpenCL source back if neccessary
+    file(GLOB_RECURSE CL_SOURCE source/core/parallel/cl/*.cpp)
+    target_sources(
+        ${wk_core_target} PRIVATE
+        ${CL_SOURCE}
     )
 endfunction()
 
