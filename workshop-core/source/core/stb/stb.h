@@ -69,7 +69,7 @@ namespace wk
 #pragma region Image Write
 		void WORKSHOP_API stbi_sc_io_write(void* user, void* data, int size);
 
-		void WORKSHOP_API write_image(RawImage& image, ImageFormat format, Stream& output);
+		void WORKSHOP_API write_image(const RawImage& image, ImageFormat format, Stream& output);
 
 		/// <summary>
 		/// Saves images depending on path extension
@@ -77,7 +77,7 @@ namespace wk
 		/// <param name="image"></param>
 		/// <param name="extension"> Must be in lowercase </param>
 		/// <param name="output"></param>
-		void WORKSHOP_API write_image(RawImage& image, std::string extension, Stream& output);
+		void WORKSHOP_API write_image(const RawImage& image, std::string extension, Stream& output);
 #pragma endregion
 	}
 }

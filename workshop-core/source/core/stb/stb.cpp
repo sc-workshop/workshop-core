@@ -106,7 +106,7 @@ namespace wk
 			stream->write(data, size);
 		}
 
-		void write_image(RawImage& image, ImageFormat format, Stream& output)
+		void write_image(const RawImage& image, ImageFormat format, Stream& output)
 		{
 			wk::Ref<MemoryStream> temp_buffer;
 
@@ -197,7 +197,7 @@ namespace wk
 			}
 		}
 
-		void write_image(RawImage& image, std::string extension, Stream& output)
+		void write_image(const RawImage& image, std::string extension, Stream& output)
 		{
 			ImageFormat format = ImageFormat::PNG;
 
