@@ -132,4 +132,17 @@ namespace wk::Geometry
 
 		return idxMax;
 	}
+
+	template<typename T>
+	bool is_clockwise(const std::vector<Point_t<T>> polygon)
+	{
+		float sum = 0;
+		for (size_t i = 0; i < polygon.size(); i++)
+		{
+			auto& p1 = polygon[(i + 1) % polygon.size()];
+			auto& p2 = polygon[i];
+			sum += (p1.x - p2.x) * (p1.y + p1.y);
+		}
+		return sum < 0;
+	}
 }
