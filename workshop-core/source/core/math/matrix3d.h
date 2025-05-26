@@ -12,6 +12,14 @@ namespace wk
 {
 	struct WORKSHOP_API Matrix3D
 	{
+	public:
+		const Matrix2D& Identity()
+		{
+			static Matrix2D identity;
+			return identity;
+		}
+
+	public:
 		union
 		{
 			struct
@@ -71,6 +79,14 @@ namespace wk
 			this->m31 = m31;
 			this->m32 = m32;
 			this->m33 = m33;
+		};
+
+		bool operator == (const Matrix3D& other) const
+		{
+			return m00 == other.m00 && m01 == other.m01 && m02 == other.m02 && m03 == other.m03 &&
+				m10 == other.m10 && m11 == other.m11 && m12 == other.m12 && m13 == other.m13 &&
+				m20 == other.m20 && m21 == other.m21 && m22 == other.m22 && m23 == other.m23 &&
+				m30 == other.m30 && m31 == other.m31 && m32 == other.m32 && m33 == other.m33;
 		};
 	};
 }
