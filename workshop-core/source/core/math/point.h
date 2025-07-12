@@ -52,6 +52,17 @@ namespace wk
 			x = a;
 			y = b;
 		};
+
+		template <typename T>
+		bool operator<(const Point_t<T>& other) const 
+		{
+			return std::tie(x, y) < std::tie(other.x, other.y);
+		}
+
+		bool operator==(const Point_t<T>& other) const
+		{
+			return x == other.x && y == other.y;
+		}
 	};
 
 	using Point = Point_t<int>;
