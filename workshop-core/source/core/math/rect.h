@@ -42,6 +42,12 @@ namespace wk
 			width = c;
 			height = d;
 		};
+
+		static const Rect_t<T>& Identity()
+		{
+			static Rect_t<T> identity(std::numeric_limits<T>::lowest(), std::numeric_limits<T>::lowest(), std::numeric_limits<T>::max(), std::numeric_limits<T>::max());
+			return identity;
+		}
 	};
 
 	using Rect = Rect_t<int>;
