@@ -98,7 +98,7 @@ namespace wk::Geometry
 	/// <param name="point"></param>
 	/// <returns>True if point is inside polygon</returns>
 	template<typename T>
-	bool point_inside_polygon(const std::vector<Point_t<T>> polygon, Point_t<T> point)
+	bool point_inside_polygon(const std::vector<Point_t<T>>& polygon, const Point_t<T>& point)
 	{
 		bool result = false;
 
@@ -118,7 +118,7 @@ namespace wk::Geometry
 	}
 
 	template<typename T>
-	size_t get_farthest_point(const Line_t<T> line, const std::vector<Point_t<T>>& v) {
+	size_t get_farthest_point(const Line_t<T>& line, const std::vector<Point_t<T>>& v) {
 		size_t idxMax = 0;
 		float distMax = point_to_line_distance(line.start, line.end, v[idxMax]);
 
@@ -134,7 +134,7 @@ namespace wk::Geometry
 	}
 
 	template<typename T>
-	bool is_clockwise(const std::vector<Point_t<T>> polygon)
+	bool is_clockwise(const std::vector<Point_t<T>>& polygon)
 	{
 		float sum = 0;
 		for (size_t i = 0; i < polygon.size(); i++)
