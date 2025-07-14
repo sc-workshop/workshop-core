@@ -35,7 +35,7 @@ function(wk_project_setup project_name)
 
     # compile flags
     target_compile_options(${project_name} PRIVATE
-        $<$<AND:${WK_MSVC},${WK_RELEASE}>: /Ox /GF /Gy /GS- /Ob2 /Oi /Ot> # Settings for release builds
+        $<$<AND:${WK_MSVC},${WK_RELEASE}>: /O2 /GF /Gy /GS- /Ob2 /Oi /Ot> # Settings for release builds
          $<$<AND:${WK_MSVC},${WK_DEBUG}>: /W4> # Settings for debug builds
 
         $<${WK_MSVC}: /wd4820 /wd4365 /wd4061 /wd4514 /wd5219 /wd4242 /wd4711 /wd4710 /wd4625 /wd4626 /wd5039 /wd5045 /wd5026 /wd5027 /wd4623 /wd4201 /wd4099 /wd5267> # Disable stupid warnings
