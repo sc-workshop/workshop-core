@@ -1,8 +1,9 @@
+
 @echo off
 
 pushd %~dp0..
 
-cmake -G "Visual Studio 16 2019" -B .
+cmake -S. -B"build-visual-studio"
 
 popd
 

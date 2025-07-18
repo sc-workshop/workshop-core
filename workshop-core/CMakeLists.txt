@@ -4,7 +4,7 @@
 file(GLOB_RECURSE HEADERS source/*.h source/*.hpp)
 file(GLOB_RECURSE SOURCES source/*.cpp)
 
-if (NOT ${WK_USE_BUILTIN_OPENCL})
+if (NOT ${WK_USE_BUILTIN_OPENCL})  # OpenCL
     file(GLOB_RECURSE CL_SOURCE source/core/parallel/cl/*.cpp)
     list(REMOVE_ITEM SOURCES ${CL_SOURCE})
 endif()
@@ -28,7 +28,7 @@ add_library(wk::core ALIAS ${TARGET})
 set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME "WorkshopCore")
 
 set_target_properties(${TARGET} PROPERTIES
-    FOLDER WorkshopSDK/core
+    FOLDER workshop-sdk/core
 )
 
 # add *.h and *.cpp files
