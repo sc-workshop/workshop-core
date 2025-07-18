@@ -1,21 +1,47 @@
-.vs
+# Build folders
+build-visual-studio/
+build-android-studio/
+build-xcode/
+build-makefile/
 
-*.vcxproj
-*.vcxproj.*
-*.sln
+# Prerequisites
+*.d
 
-build/
-build-windows/
-build-android/
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
 
-CMakeCache.txt
-CMakeFiles/
-_deps/
-cmake_install.cmake
-*.dir/
+# Precompiled Headers
+*.gch
+*.pch
 
-Debug/
-Release/
-x64/
+# Linker files
+*.ilk
 
-test/
+# Debugger Files
+*.pdb
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# debug information files
+*.dwo
