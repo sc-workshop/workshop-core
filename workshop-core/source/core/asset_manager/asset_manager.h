@@ -19,6 +19,7 @@ namespace wk {
 
 	public:
 		virtual wk::Ref<wk::Stream> load_file(const std::filesystem::path&) = 0;
+		virtual wk::Ref<wk::Stream> write_file(const std::filesystem::path&) = 0;
 		virtual bool exists(const std::filesystem::path&) = 0;
 	};
 }

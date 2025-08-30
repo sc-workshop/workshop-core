@@ -12,6 +12,11 @@ namespace wk {
 		return wk::CreateRef<InputFileStream>(path);
 	}
 
+	wk::Ref<wk::Stream> FilesystemAssetManager::write_file(const std::filesystem::path& path)
+	{
+		return wk::CreateRef<OutputFileStream>(path);
+	}
+
 	bool FilesystemAssetManager::exists(const std::filesystem::path& path) {
 		return std::filesystem::exists(path);
 	}
