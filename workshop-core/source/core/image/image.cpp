@@ -81,26 +81,34 @@ namespace wk
 		std::uint8_t* input_pixel_data = nullptr;
 		std::uint8_t* output_pixel_data = nullptr;
 
-		std::uint8_t r_channel = 0;
-		std::uint8_t g_channel = 0;
-		std::uint8_t b_channel = 0;
-		std::uint8_t a_channel = 0;
+		float r_channel = 0.f;
+		float g_channel = 0.f;
+		float b_channel = 0.f;
+		float a_channel = 0.f;
 
 		struct Channel
 		{
-			uint8_t& value;
+			float& value;
+			const uint64_t input_mask;
 			const uint8_t& input_bits;
+
+			const uint64_t output_mask;
 			const uint8_t& output_bits;
-			const uint8_t& default_value;
+
+			const float& default_value;
 		};
+
+#define MASK(value) (uint64_t)pow(2, value) - 1
 
 		const std::vector<Channel> _channels =
 		{
-			{r_channel, input_pixel_info.r_bits, output_pixel_info.r_bits, 0},
-			{g_channel, input_pixel_info.g_bits, output_pixel_info.g_bits, r_channel},
-			{b_channel, input_pixel_info.b_bits, output_pixel_info.b_bits, b_channel},
-			{a_channel, input_pixel_info.a_bits, output_pixel_info.a_bits, 0xFF},
+			{r_channel, MASK(input_pixel_info.r_bits), input_pixel_info.r_bits, MASK(output_pixel_info.r_bits), output_pixel_info.r_bits, 0.f},
+			{g_channel, MASK(input_pixel_info.g_bits), input_pixel_info.g_bits, MASK(output_pixel_info.g_bits), output_pixel_info.g_bits, r_channel},
+			{b_channel, MASK(input_pixel_info.b_bits), input_pixel_info.b_bits, MASK(output_pixel_info.b_bits), output_pixel_info.b_bits, b_channel},
+			{a_channel, MASK(input_pixel_info.a_bits), input_pixel_info.a_bits, MASK(output_pixel_info.a_bits), output_pixel_info.a_bits, 1.f},
 		};
+
+#undef MASK
 
 		for (std::uint64_t pixel_index = 0; pixel_count > pixel_index; pixel_index++)
 		{
@@ -126,13 +134,8 @@ namespace wk
 
 					if (channel.input_bits)
 					{
-						uint64_t mask = (uint64_t)pow(2, channel.input_bits) - 1;
-						channel.value = static_cast<std::uint8_t>(((mask << bit_index) & input_pixel_buffer) >> bit_index);
-
-						if (channel.input_bits < channel.output_bits)
-						{
-							channel.value <<= channel.output_bits - channel.input_bits;
-						}
+						uint8_t value = static_cast<std::uint8_t>(((channel.input_mask << bit_index) & input_pixel_buffer) >> bit_index);
+						channel.value = (float)value / channel.input_mask;
 
 						bit_index += channel.input_bits;
 					}
@@ -179,9 +182,7 @@ namespace wk
 
 					if (channel.output_bits)
 					{
-						std::uint64_t bits_mask = (std::uint64_t)((pow(2, channel.output_bits) - 1));
-						output_pixel_buffer |= ((channel.value & bits_mask) << bit_offset);
-
+						output_pixel_buffer |= (((uint8_t)(channel.value * channel.output_mask) & channel.output_mask) << bit_offset);
 						bit_offset += channel.output_bits;
 					}
 				}
