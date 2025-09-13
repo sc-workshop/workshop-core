@@ -49,12 +49,12 @@ namespace wk::hash
 			, bool> = true>
 		void update(const ValueT & value)
 		{
-			Hash_t<ValueT>::update<T>(*this, value);
+			Hash_t<ValueT>::template update<T>(*this, value);
 		}
 
 	public:
-		template<typename T>
-		static T combine(const T& seed, const T& value)
+		template<typename H>
+		static H combine(const H& seed, const H& value)
 		{
 			return value + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 		}

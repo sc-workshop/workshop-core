@@ -9,7 +9,7 @@ namespace wk::hash
 	class Fnv : public HashStream<T>
 	{
 	public:
-		virtual Digest digest() const
+		virtual typename HashStream<T>::Digest digest() const
 		{
 			return m_hash;
 		}

@@ -36,11 +36,14 @@ function(wk_project_setup project_name)
     # compile flags
     target_compile_options(${project_name} PRIVATE
         $<$<AND:${WK_MSVC},${WK_RELEASE}>: /O2 /GF /Gy /GS- /Ob2 /Oi /Ot> # Settings for release builds
-         $<$<AND:${WK_MSVC},${WK_DEBUG}>: /W4> # Settings for debug builds
+        $<$<AND:${WK_MSVC},${WK_DEBUG}>: /W4> # Settings for debug builds
 
         $<${WK_MSVC}: /wd4820 /wd4365 /wd4061 /wd4514 /wd5219 /wd4242 /wd4711 /wd4710 /wd4625 /wd4626 /wd5039 /wd5045 /wd5026 /wd5027 /wd4623 /wd4201 /wd4099 /wd5267> # Disable stupid warnings
 
-        $<$<OR:${WK_GNU},${WK_CLANG}>:-Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unknown-pragmas -Werror -Wno-gnu-anonymous-struct -Wno-nested-anon-types> # Settings for GNU and Clang compilers
+        $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,${WK_DEBUG}>: -W4 -Wextra -Wpedantic -Werror>
+        $<$<OR:${WK_GNU},${WK_CLANG}>: -Wno-unused-variable -Wno-unknown-pragmas -Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-c++98-compat -Wno-c++14-compat -Wno-error=microsoft-enum-value -Wno-error=language-extension-token> # Settings for GNU and Clang compilers
+
+        $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>:-mavx2 -mbmi2 -maes -mpclmul -mfma> # AVX2
     )
 
     # compile defines

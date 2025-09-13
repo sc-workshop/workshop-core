@@ -20,7 +20,7 @@ namespace wk
 			T* ptr = (T*)std::malloc(size);
 			if (!ptr)
 			{
-				throw Exception("Failed to allocate memory: " + size);
+				throw Exception("Failed to allocate memory: " + std::to_string(size));
 			}
 
 			return ptr;
