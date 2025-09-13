@@ -5,6 +5,7 @@
 #include "core/math/point.h"
 #include "core/math/rect.h"
 #include "core/hashing/ncrypto/xxhash.h"
+#include "core/hashing/hashing.h"
 
 #include <array>
 
@@ -109,21 +110,21 @@ namespace wk
 		SizeT m_width = 0;
 		SizeT m_height = 0;
 	};
+}
 
-	namespace hash
+namespace wk::hash
+{
+	template<>
+	struct Hash_t<Image>
 	{
-		template<>
-		struct Hash_t<Image>
+		template<typename T>
+		static void update(wk::hash::HashStream<T>& stream, const Image& image)
 		{
-			template<typename T>
-			static void update(wk::hash::HashStream<T>& stream, const Image& image)
-			{
-				stream.update(image.depth());
-				stream.update(image.colorspace());
-				stream.update(image.width());
-				stream.update(image.height());
-				stream.update(image.data(), image.data_length());
-			}
-		};
-	}
+			stream.update(image.depth());
+			stream.update(image.colorspace());
+			stream.update(image.width());
+			stream.update(image.height());
+			stream.update(image.data(), image.data_length());
+		}
+	};
 }

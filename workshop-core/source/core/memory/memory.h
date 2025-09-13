@@ -2,6 +2,7 @@
 
 #include "core/exception/exception.h"
 
+#include <cstring>
 #include <memory>
 
 namespace wk
@@ -34,7 +35,7 @@ namespace wk
 				return nullptr;
 			}
 
-			return (T*)std::memcpy(destination, source, size);
+			return reinterpret_cast<T*>(std::memcpy(reinterpret_cast<void*>(destination), reinterpret_cast<const void*>(source), size));
 		}
 
 		static void free(void* block)

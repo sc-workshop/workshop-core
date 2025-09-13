@@ -1,9 +1,9 @@
 #pragma once
 #include "core/generic/non_copyable.h"
+#include "hash.h"
 
 #include <stdint.h>
 #include <type_traits>
-#include "hash.h"
 
 namespace wk::hash
 {
@@ -22,7 +22,7 @@ namespace wk::hash
 		virtual Digest digest() const = 0;
 		virtual void clear() = 0;
 
-		void update(const uint8_t* data, size_t length)
+		void update(const uint8_t* data, std::size_t length)
 		{
 			if (!length) return;
 			update_hash(data, length);
@@ -49,7 +49,7 @@ namespace wk::hash
 			, bool> = true>
 		void update(const ValueT & value)
 		{
-			Hash_t<ValueT>::template update<T>(*this, value);
+			wk::hash::Hash_t<ValueT>::template update<T>(*this, value);
 		}
 
 	public:
@@ -60,6 +60,6 @@ namespace wk::hash
 		}
 
 	protected:
-		virtual void update_hash(const uint8_t* data, size_t length) = 0;
+		virtual void update_hash(const uint8_t* data, std::size_t length) = 0;
 	};
 }

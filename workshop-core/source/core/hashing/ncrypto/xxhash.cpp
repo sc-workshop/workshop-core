@@ -45,7 +45,7 @@ namespace wk::hash
 		XXH3_64bits_reset((XXH3_state_t*)m_context);
 	}
 
-	void XXHash364::update_hash(const uint8_t* data, size_t length)
+	void XXHash364::update_hash(const uint8_t* data, std::size_t length)
 	{
 		XXH3_64bits_update((XXH3_state_t*)m_context, data, length);
 	}
@@ -71,7 +71,7 @@ namespace wk::hash
 		XXH32_reset((XXH32_state_t*)m_context, 0);
 	}
 
-	void XXHash32::update_hash(const uint8_t* data, size_t length)
+	void XXHash32::update_hash(const uint8_t* data, std::size_t length)
 	{
 		XXH32_update((XXH32_state_t*)m_context, data, length);
 	}

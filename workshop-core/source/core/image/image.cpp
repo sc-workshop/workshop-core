@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <map>
+#include <cmath>
 
 namespace wk
 {
@@ -98,7 +99,7 @@ namespace wk
 			const float& default_value;
 		};
 
-#define MASK(value) (uint64_t)pow(2, value) - 1
+#define MASK(value) (uint64_t)std::pow(2, value) - 1
 
 		const std::vector<Channel> _channels =
 		{

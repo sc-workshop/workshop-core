@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 namespace wk
 {
 	enum class Endian
@@ -19,7 +21,7 @@ namespace wk
 
 		src.value = value;
 
-		for (size_t i = 0; i < sizeof(T); i++)
+		for (std::size_t i = 0; i < sizeof(T); i++)
 			dst.array[i] = src.array[sizeof(T) - i - 1];
 
 		return dst.value;

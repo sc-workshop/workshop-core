@@ -1,4 +1,5 @@
 #include "md5.h"
+#include <cstring>
 
 namespace wk::MD5
 {

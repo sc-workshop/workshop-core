@@ -15,7 +15,7 @@ namespace wk::hash
 		virtual void clear();
 
 	protected:
-		virtual void update_hash(const uint8_t* data, size_t length);
+		virtual void update_hash(const uint8_t* data, std::size_t length);
 
 	private:
 		void* m_context;
@@ -32,7 +32,7 @@ namespace wk::hash
 		virtual void clear();
 
 	protected:
-		virtual void update_hash(const uint8_t* data, size_t length);
+		virtual void update_hash(const uint8_t* data, std::size_t length);
 
 	private:
 		void* m_context;
