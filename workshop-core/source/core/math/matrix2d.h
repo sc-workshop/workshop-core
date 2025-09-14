@@ -2,7 +2,7 @@
 
 #include "core/memory/memory.h"
 #include "core/preprocessor/api.h"
-#include "core/hashing/hash.h"
+#include "core/hashing/hashing.h"
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -62,19 +62,19 @@ namespace wk
 				tx == other.tx && ty == other.ty;
 		};
 	};
+}
 
-	namespace hash
+namespace wk::hash
+{
+	template<>
+	struct Hash_t<wk::Matrix2D>
 	{
-		template<>
-		struct Hash_t<wk::Matrix2D>
+		template<typename T>
+		static void update(wk::hash::HashStream<T>& stream, const wk::Matrix2D& matrix)
 		{
-			template<typename T>
-			static void update(wk::hash::HashStream<T>& stream, const wk::Matrix2D& matrix)
-			{
-				stream.update((const uint8_t*)matrix.elements, sizeof(matrix.elements));
-			}
-		};
-	}
+			stream.update((const uint8_t*)matrix.elements, sizeof(matrix.elements));
+		}
+	};
 }
 
 #ifdef _MSC_VER

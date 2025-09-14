@@ -10,7 +10,7 @@ namespace wk
 	class Memory
 	{
 	public:
-		template<typename T = std::uint8_t>
+		template<typename T = uint8_t>
 		static constexpr T* allocate(size_t size)
 		{
 			if (size == 0)

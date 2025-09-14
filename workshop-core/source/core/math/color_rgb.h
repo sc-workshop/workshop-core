@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/memory/memory.h"
-#include "core/hashing/hash.h"
+#include "core/hashing/hashing.h"
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -48,18 +48,20 @@ namespace wk
 
 	using ColorRGB = ColorRGB_t<uint8_t>;
 
-	namespace hash
+	
+}
+
+namespace wk::hash
+{
+	template<typename V>
+	struct Hash_t<wk::ColorRGB_t<V>>
 	{
-		template<typename V>
-		struct Hash_t<wk::ColorRGB_t<V>>
+		template<typename T>
+		static void update(wk::hash::HashStream<T>& stream, const wk::ColorRGB_t<V>& color)
 		{
-			template<typename T>
-			static void update(wk::hash::HashStream<T>& stream, const wk::ColorRGB_t<V>& color)
-			{
-				stream.update((uint8_t*)&color.channels, sizeof(color.channels));
-			}
-		};
-	}
+			stream.update((uint8_t*)&color.channels, sizeof(color.channels));
+		}
+	};
 }
 
 #ifdef _MSC_VER

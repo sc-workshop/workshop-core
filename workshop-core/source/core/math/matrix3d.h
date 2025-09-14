@@ -13,9 +13,9 @@ namespace wk
 	struct WORKSHOP_API Matrix3D
 	{
 	public:
-		const Matrix2D& Identity()
+		const Matrix3D& Identity()
 		{
-			static Matrix2D identity;
+			static Matrix3D identity;
 			return identity;
 		}
 
