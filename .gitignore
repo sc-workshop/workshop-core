@@ -3,6 +3,7 @@ build-visual-studio/
 build-android-studio/
 build-xcode/
 build-makefile/
+build/
 
 # Prerequisites
 *.d

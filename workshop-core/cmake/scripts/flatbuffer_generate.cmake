@@ -51,6 +51,15 @@
 # Optional (only needed within different directory):
 #     add_dependencies(app GENERATE_my_generated_headers_target)
 function(wk_flatbuffers_generate_headers)
+  if (MSVC)
+    wk_flatbuffers_generate_headers_msvc(${ARGV})
+  else()
+    wk_flatbuffers_generate_headers_gnu(${ARGV})
+  endif()
+
+endfunction()
+
+function(wk_flatbuffers_generate_headers_msvc)
   # Parse function arguments.
   set(options)
   set(one_value_args
@@ -145,26 +154,148 @@ function(wk_flatbuffers_generate_headers)
     endif()
   endforeach()
 
+  # Set up interface library
+  add_library(${FLATBUFFERS_GENERATE_HEADERS_TARGET} INTERFACE)
+  target_include_directories(
+    ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
+    INTERFACE ${generated_target_dir})
+
+  # Organize file layout for IDEs.
+  source_group(
+    TREE "${generated_target_dir}"
+    PREFIX "Flatbuffers/Generated/Headers Files"
+    FILES ${all_generated_header_files})
+  source_group(
+    TREE "${generated_target_dir}"
+    PREFIX "Flatbuffers/Generated/Source Files"
+    FILES ${all_generated_source_files})
+  source_group(
+    TREE ${working_dir}
+    PREFIX "Flatbuffers/Schemas"
+    FILES ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
+  if (NOT ${FLATBUFFERS_GENERATE_HEADERS_BINARY_SCHEMAS_DIR} STREQUAL "")
+    source_group(
+      TREE "${FLATBUFFERS_GENERATE_HEADERS_BINARY_SCHEMAS_DIR}"
+      PREFIX "Flatbuffers/Generated/Binary Schemas"
+      FILES ${all_generated_binary_files})
+  endif()
+endfunction()
+
+function(wk_flatbuffers_generate_headers_gnu)
+  # Parse function arguments.
+  set(options)
+  set(one_value_args
+    "TARGET"
+    "INCLUDE_PREFIX"
+    "BINARY_SCHEMAS_DIR")
+  set(multi_value_args
+    "SCHEMAS"
+    "INCLUDE"
+    "FLAGS")
+  cmake_parse_arguments(
+    PARSE_ARGV 0
+    FLATBUFFERS_GENERATE_HEADERS
+    "${options}"
+    "${one_value_args}"
+    "${multi_value_args}")
+
+  # Test if including from FindFlatBuffers
+  if(FLATBUFFERS_FLATC_EXECUTABLE)
+    set(FLATC_TARGET "")
+    set(FLATC ${FLATBUFFERS_FLATC_EXECUTABLE})
+  elseif(TARGET flatbuffers::flatc)
+    set(FLATC_TARGET flatbuffers::flatc)
+    set(FLATC flatbuffers::flatc)
+  else()
+    set(FLATC_TARGET flatc)
+    set(FLATC flatc)
+  endif()
+
+  set(working_dir "${CMAKE_CURRENT_SOURCE_DIR}")
+
+  # Generate the include files parameters.
+  set(include_params "")
+  foreach (include_dir ${FLATBUFFERS_GENERATE_HEADERS_INCLUDE})
+    set(include_params -I ${include_dir} ${include_params})
+  endforeach()
+
+  # Create a directory to place the generated code.
+  set(generated_target_dir "${CMAKE_CURRENT_BINARY_DIR}/${FLATBUFFERS_GENERATE_HEADERS_TARGET}")
+  set(generated_include_dir "${generated_target_dir}")
+  if (NOT ${FLATBUFFERS_GENERATE_HEADERS_INCLUDE_PREFIX} STREQUAL "")
+    set(generated_include_dir "${generated_include_dir}/${FLATBUFFERS_GENERATE_HEADERS_INCLUDE_PREFIX}")
+    list(APPEND FLATBUFFERS_GENERATE_HEADERS_FLAGS 
+         "--include-prefix" ${FLATBUFFERS_GENERATE_HEADERS_INCLUDE_PREFIX})
+  endif()
+
+  set(generated_custom_commands)
+
+  # Create rules to generate the code for each schema.
+  foreach(schema ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
+    get_filename_component(filename ${schema} NAME_WE)
+    set(generated_include "${generated_include_dir}/${filename}_generated.h")
+
+    # Generate files for grpc if needed
+    set(generated_source_file)
+    if("${FLATBUFFERS_GENERATE_HEADERS_FLAGS}" MATCHES "--grpc")
+      # Check if schema file contain a rpc_service definition
+      file(STRINGS ${schema} has_grpc REGEX "rpc_service")
+      if(has_grpc)
+        list(APPEND generated_include "${generated_include_dir}/${filename}.grpc.fb.h")
+        set(generated_source_file "${generated_include_dir}/${filename}.grpc.fb.cc")
+      endif()
+    endif()
+
+    add_custom_command(
+      OUTPUT ${generated_include} ${generated_source_file}
+      COMMAND ${FLATC} ${FLATC_ARGS}
+      -o ${generated_include_dir}
+      ${include_params}
+      -c ${schema}
+      ${FLATBUFFERS_GENERATE_HEADERS_FLAGS}
+      DEPENDS ${FLATC_TARGET} ${schema}
+      WORKING_DIRECTORY "${working_dir}"
+      COMMENT "Building ${schema} flatbuffers...")
+    list(APPEND all_generated_header_files ${generated_include})
+    list(APPEND all_generated_source_files ${generated_source_file})
+    list(APPEND generated_custom_commands "${generated_include}" "${generated_source_file}")
+
+    # Geneate the binary flatbuffers schemas if instructed to.
+    if (NOT ${FLATBUFFERS_GENERATE_HEADERS_BINARY_SCHEMAS_DIR} STREQUAL "")
+      set(binary_schema
+          "${FLATBUFFERS_GENERATE_HEADERS_BINARY_SCHEMAS_DIR}/${filename}.bfbs")
+      add_custom_command(
+        OUTPUT ${binary_schema}
+        COMMAND ${FLATC} -b --schema
+        -o ${FLATBUFFERS_GENERATE_HEADERS_BINARY_SCHEMAS_DIR}
+        ${include_params}
+        ${schema}
+        DEPENDS ${FLATC_TARGET} ${schema}
+        WORKING_DIRECTORY "${working_dir}")
+      list(APPEND generated_custom_commands "${binary_schema}")
+      list(APPEND all_generated_binary_files ${binary_schema})
+    endif()
+  endforeach()
+
   # Create an additional target as add_custom_command scope is only within same directory (CMakeFile.txt)
-  #set(generate_target GENERATE_${FLATBUFFERS_GENERATE_HEADERS_TARGET})
-  #add_custom_target(${generate_target} ALL
-  #                  #DEPENDS ${generated_custom_commands}
-  #                  COMMENT "Generating flatbuffer target ${FLATBUFFERS_GENERATE_HEADERS_TARGET}")
+  set(generate_target GENERATE_${FLATBUFFERS_GENERATE_HEADERS_TARGET})
+  add_custom_target(${generate_target} ALL
+                    DEPENDS ${generated_custom_commands}
+                    COMMENT "Generating flatbuffer target ${FLATBUFFERS_GENERATE_HEADERS_TARGET}")
 
   # Set up interface library
   add_library(${FLATBUFFERS_GENERATE_HEADERS_TARGET} INTERFACE)
-  #target_sources(
-  #  ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
-  #  INTERFACE
-  #    ${all_generated_header_files}
-  #    ${all_generated_binary_files}
-  #    ${all_generated_source_files}
-  #    #${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS}
-  #)
-  #add_dependencies(
-  #  ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
-  #  ${FLATC}
-  #  ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
+  target_sources(
+    ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
+    INTERFACE
+      ${all_generated_header_files}
+      ${all_generated_binary_files}
+      ${all_generated_source_files}
+      ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
+  add_dependencies(
+    ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
+    ${FLATC}
+    ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
   target_include_directories(
     ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
     INTERFACE ${generated_target_dir})
