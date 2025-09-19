@@ -53,7 +53,7 @@ function(wk_project_setup project_name)
     )
 
 
-    # Dll handling
+    # DLL handling
     get_target_property(target_type ${project_name} TYPE)
     if (target_type STREQUAL "EXECUTABLE")
         target_compile_definitions(
@@ -67,6 +67,7 @@ function(wk_project_setup project_name)
         )
     endif ()
 
+    # TODO(pavidloq): disable in-source builds and handle file grouping automatically.
     # File grouping
     if (NOT WK_IN_SOURCE_BUILD)
         get_target_property(SOURCES ${project_name} SOURCES)
@@ -74,10 +75,10 @@ function(wk_project_setup project_name)
         source_group(TREE ${SOURCE_DIR}/source FILES ${SOURCES})
     endif()
 
-    # force C++17
+    # force C++20
     target_compile_features(${project_name}
         PRIVATE
-        cxx_std_17
+        cxx_std_20
     )
 
 endfunction()
