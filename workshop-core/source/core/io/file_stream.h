@@ -21,11 +21,11 @@ namespace wk
 		NON_COPYABLE(InputFileStream)
 
 	public:
-		InputFileStream(const fs::path& path)
+		InputFileStream(const std::filesystem::path& path)
 		{
 			if (!fs::exists(path))
 			{
-				std::string path_string(path.u8string()); // scary
+				std::string path_string(path.string()); // scary
 				throw Exception("File %s doesn't exist!", path_string.c_str());
 			}
 
