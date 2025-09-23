@@ -23,7 +23,7 @@ namespace wk
 	public:
 		InputFileStream(const std::filesystem::path& path)
 		{
-			if (!fs::exists(path))
+			if (!std::filesystem::exists(path))
 			{
 				std::string path_string(path.string()); // scary
 				throw Exception("File %s doesn't exist!", path_string.c_str());
@@ -143,7 +143,7 @@ namespace wk
 		NON_COPYABLE(OutputFileStream)
 
 	public:
-		OutputFileStream(const fs::path& path)
+		OutputFileStream(const std::filesystem::path& path)
 		{
 			m_file.open(path, std::ios_base::binary);
 
