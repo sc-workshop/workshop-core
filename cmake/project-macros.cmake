@@ -40,7 +40,7 @@ function(wk_project_setup project_name)
 
         $<${WK_MSVC}: /wd4820 /wd4365 /wd4061 /wd4514 /wd5219 /wd4242 /wd4711 /wd4710 /wd4625 /wd4626 /wd5039 /wd5045 /wd5026 /wd5027 /wd4623 /wd4201 /wd4099 /wd5267> # Disable stupid warnings
 
-        $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,${WK_DEBUG}>: -W4 -Wextra -Wpedantic -Werror>
+        $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,${WK_DEBUG}>: -Wextra -Wpedantic -Werror>
         $<$<OR:${WK_GNU},${WK_CLANG}>: -Wno-unused-variable -Wno-unknown-pragmas -Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-c++98-compat -Wno-c++14-compat -Wno-error=microsoft-enum-value -Wno-error=language-extension-token> # Settings for GNU and Clang compilers
 
         $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>:-mavx2 -mbmi2 -maes -mpclmul -mfma> # AVX2

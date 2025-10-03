@@ -8,15 +8,13 @@ namespace wk
 	{
 		if (length == 0) return;
 
-		m_data = TPtr(Memory::allocate<T>(length));
+		m_data = Memory::allocate<T>(length);
 		m_length = length;
 	}
 
-	MemoryStream::MemoryStream(const MemoryStream& other) : m_data(other.get_reference())
-	{
+	MemoryStream::~MemoryStream() {
+		Memory::free(m_data);
 	}
 
-	void* MemoryStream::data_ref() const { return (void*)m_data.get(); };
-
-	MemoryStream::TPtr MemoryStream::get_reference() const{ return m_data; }
+	void* MemoryStream::data_ref() const { return (void*)m_data; };
 }
