@@ -9,15 +9,9 @@ endmacro()
 
 # function to setup specified project for workshop workspace
 function(wk_project_setup project_name)
-    # compilers
-    wk_set_global(WK_GNU_DEF_fe "$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},GNU>")
-    wk_set_global(WK_GNU_APPLE_fe "$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},AppleClang>")
-    wk_set_global(WK_GNU_fe "$<OR:${WK_GNU_DEF_fe},${WK_GNU_APPLE_fe}>")
-    wk_set_global(WK_MSVC_fe "$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},MSVC>")
-
-    wk_set_global(WK_CLANG "$<OR:${WK_GNU_fe},$<CXX_COMPILER_ID:Clang>>")
-    wk_set_global(WK_GNU "$<OR:${WK_GNU_fe},$<CXX_COMPILER_ID:GNU>>")
-    wk_set_global(WK_MSVC "$<OR:${WK_MSVC_fe},$<CXX_COMPILER_ID:MSVC>>")
+    wk_set_global(WK_CLANG "$<CXX_COMPILER_ID:Clang,AppleClang>")
+    wk_set_global(WK_GNU "$<CXX_COMPILER_ID:GNU>")
+    wk_set_global(WK_MSVC "$<CXX_COMPILER_ID:MSVC>")
 
     # build configurations
     wk_set_global(WK_DEBUG "$<CONFIG:Debug>")
@@ -27,7 +21,7 @@ function(wk_project_setup project_name)
     wk_set_global(WK_X86_64 "$<OR:$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},AMD64>>")
     wk_set_global(WK_AARCH64 "$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},aarch64>")
 
-    wk_set_global(WK_X64 "$<OR:${WK_X86_64},${WK_AARCH64}>")    
+    wk_set_global(WK_X64 "$<OR:${WK_X86_64},${WK_AARCH64}>")
 
     wk_set_global(WK_PREFERRED_ISA "${WK_PREFERRED_CPU_FEATURES}")
     wk_set_global(WK_PREFERRED_LATEST_ISA "$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>")
@@ -41,7 +35,8 @@ function(wk_project_setup project_name)
         $<${WK_MSVC}: /wd4820 /wd4365 /wd4061 /wd4514 /wd5219 /wd4242 /wd4711 /wd4710 /wd4625 /wd4626 /wd5039 /wd5045 /wd5026 /wd5027 /wd4623 /wd4201 /wd4099 /wd5267> # Disable stupid warnings
 
         $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,${WK_DEBUG}>: -Wextra -Wpedantic -Werror>
-        $<$<OR:${WK_GNU},${WK_CLANG}>: -Wno-unused-variable -Wno-unknown-pragmas -Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-c++98-compat -Wno-c++14-compat -Wno-error=microsoft-enum-value -Wno-error=language-extension-token> # Settings for GNU and Clang compilers
+        $<$<OR:${WK_GNU},${WK_CLANG}>: -Wno-unused-variable -Wno-unknown-pragmas -Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-c++98-compat -Wno-c++14-compat> # Shared settings between GNU and Clang compilers
+        $<${WK_CLANG}: -Wno-error=microsoft-enum-value -Wno-error=language-extension-token>
 
         $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>:-mavx2 -mbmi2 -maes -mpclmul -mfma> # AVX2
     )
