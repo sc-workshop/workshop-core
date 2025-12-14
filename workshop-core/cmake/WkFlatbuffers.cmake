@@ -9,7 +9,14 @@ function(wk_include_flatbuffers)
         flatbuffers
         GIT_REPOSITORY https://github.com/google/flatbuffers.git
         GIT_TAG v25.2.10
+        FIND_PACKAGE_ARGS
     )
     FetchContent_MakeAvailable(flatbuffers)
-    target_link_libraries(${wk_core_target} PUBLIC FlatBuffers::FlatBuffers)
+
+    if (TARGET FlatBuffers::FlatBuffers)
+        target_link_libraries(${wk_core_target} PUBLIC FlatBuffers::FlatBuffers)
+    else()
+        target_link_libraries(${wk_core_target} PUBLIC flatbuffers::flatbuffers)
+    endif()
+    
 endfunction()

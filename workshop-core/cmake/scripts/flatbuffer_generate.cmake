@@ -87,6 +87,11 @@ function(wk_flatbuffers_generate_headers_msvc)
   else()
     set(FLATC_TARGET flatc)
     set(FLATC flatc)
+
+    find_program(FLATC_EXE flatc)
+    if(FLATC_EXE STREQUAL "")
+      message(FATAL_ERROR "flatc not found")
+    endif()
   endif()
 
   set(working_dir "${CMAKE_CURRENT_SOURCE_DIR}")
