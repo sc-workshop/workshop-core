@@ -46,13 +46,14 @@ namespace wk
 
 	std::size_t BufferStream::write_data(const void* ptr, std::size_t length)
 	{
-		std::size_t old_size = m_buffer.size();
-		m_buffer.resize(old_size + length);
+		if (m_position + length > m_buffer.size()) {
+			std::size_t old_size = m_buffer.size();
+			m_buffer.resize(old_size + length);
+		}
 
-		Memory::copy(ptr, &m_buffer[old_size], length);
+		Memory::copy(ptr, &m_buffer[m_position], length);
 
 		m_position += length;
-
 		return length;
 	};
 }
