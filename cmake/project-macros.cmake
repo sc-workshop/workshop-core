@@ -8,16 +8,27 @@ macro(wk_set_global var_name var_value)
 endmacro()
 
 # function to setup specified project for workshop workspace
-function(wk_project_setup project_name)
+macro(wk_project_setup project_name)
+    # Compiler accepts AppleClang-style command line options, which is also GNU-style
     wk_set_global(WK_CLANG "$<CXX_COMPILER_ID:Clang,AppleClang>")
+
+    # Compiler accepts GNU-style command line options
     wk_set_global(WK_GNU "$<CXX_COMPILER_ID:GNU>")
+
+    # Compiler accepts MSVC-style command line options
     wk_set_global(WK_MSVC "$<CXX_COMPILER_ID:MSVC>")
 
-    # build configurations
+    # Compiler is Visual Studio cl.exe
+    wk_set_global(WK_MSVC_CL "$<AND:${WK_MSVC},$<CXX_COMPILER_ID:MSVC>>")
+
+    # Compiler is Visual Studio clangcl.exe
+    set(WK_CLANG_CL "$<AND:${WK_MSVC},$<CXX_COMPILER_ID:Clang>>")
+
+    # Build configurations
     wk_set_global(WK_DEBUG "$<CONFIG:Debug>")
     wk_set_global(WK_RELEASE "$<CONFIG:Release,RelWithDebInfo,MinSizeRel>")
 
-    # build architectures
+    # Build architectures
     wk_set_global(WK_X86_64 "$<OR:$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},AMD64>>")
     wk_set_global(WK_AARCH64 "$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},aarch64>")
 
@@ -27,7 +38,7 @@ function(wk_project_setup project_name)
     wk_set_global(WK_PREFERRED_LATEST_ISA "$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>")
     wk_set_global(WK_PREFERRED_OLDEST_ISA "$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},DEFAULT>")
 
-    # compile flags
+    # Compile flags
     target_compile_options(${project_name} PRIVATE
         $<$<AND:${WK_MSVC},${WK_RELEASE}>: /O2 /GF /Gy /GS- /Ob2 /Oi /Ot> # Settings for release builds
         $<$<AND:${WK_MSVC},${WK_DEBUG}>: /W4> # Settings for debug builds
@@ -38,15 +49,16 @@ function(wk_project_setup project_name)
         $<$<OR:${WK_GNU},${WK_CLANG}>: -Wno-unused-variable -Wno-unknown-pragmas -Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-c++98-compat -Wno-c++14-compat> # Shared settings between GNU and Clang compilers
         $<${WK_CLANG}: -Wno-error=microsoft-enum-value -Wno-error=language-extension-token>
 
-        $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>:-mavx2 -mbmi2 -maes -mpclmul -mfma> # AVX2
+        # AVX2
+        $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>:-mavx2 -mbmi2 -maes -mpclmul -mfma>   
+        $<$<AND:${WK_MSVC},$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>: /arch:AVX2 > 
     )
 
-    # compile defines
+    # Remove annoying warnings for MSVC
     target_compile_definitions(
             ${project_name} PRIVATE
             $<${WK_MSVC}: _CRT_SECURE_NO_WARNINGS _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING>
     )
-
 
     # DLL handling
     get_target_property(target_type ${project_name} TYPE)
@@ -76,4 +88,37 @@ function(wk_project_setup project_name)
         cxx_std_20
     )
 
-endfunction()
+endmacro()
+
+macro (wk_fast_math project_name)
+    target_compile_options(${project_name} PRIVATE
+        $<$<AND:${WK_MSVC_CL},$<VERSION_LESS:$<CXX_COMPILER_VERSION>,19.30>>: /fp:fast >
+        $<$<AND:${WK_MSVC_CL},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,19.30>>: /fp:fast >
+        $<${WK_CLANG_CL}: /fp:fast >
+
+        $<$<AND:${WK_CLANG_CL},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,14.0.0>>: -Xclang$<SEMICOLON>-ffp-contract=fast >
+        $<$<AND:${WK_CLANG},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,10.0.0>>: -ffp-model=fast >
+
+        $<${WK_GNU}: -ffp-contract=fast >
+        $<${WK_GNU}: -fno-math-errno >
+        $<${WK_GNU}: -fno-trapping-math >
+
+        # Hide noise from clang and clangcl 20 warning the 2nd fp option changes
+        # one of the settings made the first.
+        $<$<AND:${WK_CLANG},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,20.0.0>>: -Wno-overriding-option >
+    )
+endmacro()
+
+macro (wk_strict_math project_name)
+    target_compile_options(${project_name} PRIVATE
+        $<$<AND:${WK_MSVC_CL},$<VERSION_LESS:$<CXX_COMPILER_VERSION>,19.30>>: /fp:strict >
+        $<$<AND:${WK_MSVC_CL},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,19.30>>: /fp:precise >
+        $<${WK_CLANG_CL}: /fp:precise >
+
+        $<$<AND:${WK_CLANG_CL},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,14.0.0>>: -Xclang$<SEMICOLON>-ffp-contract=off >
+        $<$<AND:${WK_CLANG},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,10.0.0>>: -ffp-model=precise >
+        $<${WK_GNU}: -ffp-contract=off >
+
+        $<$<AND:${WK_CLANG},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,20.0.0>>: -Wno-overriding-option >
+    )
+endmacro()
