@@ -61,6 +61,34 @@ namespace wk
 				c == other.c && d == other.d &&
 				tx == other.tx && ty == other.ty;
 		};
+
+		float applyX(float x, float y) const {
+			return x * a + y * c + tx;
+		}
+
+		float applyY(float x, float y) const {
+			return y * d + x * b + ty;
+		}
+
+		template<typename T = Matrix2D>
+		T operator*(const T& matrix) const {
+			T result{};
+			float scaleX = (a * matrix.a) + (b * matrix.c);
+			float shearX = (a * matrix.b) + (b * matrix.d);
+			float scaleY = (d * matrix.d) + (c * matrix.b);
+			float shearY = (d * matrix.c) + (c * matrix.a);
+			float x = matrix.applyX(tx, ty);
+			float y = matrix.applyY(tx, ty);
+
+			result.a = scaleX;
+			result.b = shearX;
+			result.c = shearY;
+			result.d = scaleY;
+			result.tx = x;
+			result.ty = y;
+			
+			return result;
+		}
 	};
 }
 
