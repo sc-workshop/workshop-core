@@ -1,6 +1,7 @@
+#ifdef WK_LOCALE
 #include "string_converter.h"
 
-#include <codecvt>
+#include <simdturf.h>
 
 namespace wk
 {
@@ -16,3 +17,4 @@ namespace wk
 		return convert.from_bytes(str);
 	}
 }
+#endif

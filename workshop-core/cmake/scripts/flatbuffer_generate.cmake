@@ -284,12 +284,17 @@ function(wk_flatbuffers_generate_headers_gnu)
 
   # Create an additional target as add_custom_command scope is only within same directory (CMakeFile.txt)
   set(generate_target GENERATE_${FLATBUFFERS_GENERATE_HEADERS_TARGET})
-  add_custom_target(${generate_target} ALL
-                    DEPENDS ${generated_custom_commands}
-                    COMMENT "Generating flatbuffer target ${FLATBUFFERS_GENERATE_HEADERS_TARGET}")
+  add_custom_target(${generate_target}
+                  DEPENDS ${generated_custom_commands}
+                  COMMENT "Generating flatbuffer target ${FLATBUFFERS_GENERATE_HEADERS_TARGET}")
 
   # Set up interface library
   add_library(${FLATBUFFERS_GENERATE_HEADERS_TARGET} INTERFACE)
+  add_dependencies(
+    ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
+    ${generate_target}
+  )
+
   target_sources(
     ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
     INTERFACE

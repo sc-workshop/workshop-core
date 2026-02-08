@@ -1,5 +1,8 @@
 # Project: workshop-core
 
+# MacOS setup
+set(CMAKE_OSX_ARCHITECTURES "x86_64;x86_64h;arm64" CACHE STRING "" FORCE)
+
 # C++ headers and source files
 file(GLOB_RECURSE HEADERS source/*.h source/*.hpp)
 file(GLOB_RECURSE SOURCES source/*.cpp)

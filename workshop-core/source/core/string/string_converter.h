@@ -7,6 +7,10 @@
 #include <iostream>
 #include <string>
 
+#ifndef WK_LOCALE
+	#error "WK_LOCALE must be defined to use StringConverter"
+#endif
+
 namespace wk
 {
 	class StringConverter

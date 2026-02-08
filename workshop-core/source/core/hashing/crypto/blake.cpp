@@ -1,3 +1,4 @@
+#ifdef WK_BLAKE3
 #include "blake.h"
 #include <blake3.h>
 
@@ -21,3 +22,4 @@ namespace wk::hash {
         blake3_hasher_init(&m_context);
     }
 }
+#endif

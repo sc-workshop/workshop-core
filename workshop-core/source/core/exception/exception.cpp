@@ -1,6 +1,6 @@
 #include "core/exception/exception.h"
 
-#include <cstdio>
+#include <stdio.h>
 
 namespace wk
 {
@@ -17,7 +17,7 @@ namespace wk
 	void Exception::proceed_vargs(const char* format, va_list args)
 	{
 		char message[2048]; // TODO(pavidloq): wtf?
-		vsprintf(message, format, args);
+        vsnprintf(message, sizeof(message), format, args);
 		m_message = message;
 	}
 }
