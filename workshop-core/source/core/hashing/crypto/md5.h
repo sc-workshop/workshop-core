@@ -16,7 +16,6 @@ namespace wk::hash
 	{
 	public:
 		MD5();
-		virtual ~MD5();
 
 	public:
 		virtual Digest digest() const;
@@ -26,6 +25,6 @@ namespace wk::hash
 		virtual void update_hash(const uint8_t* data, size_t length);
 
 	private:
-		wk::MD5::md5* m_context;
+        wk::Ref<wk::MD5::md5> m_context;
 	};
 }

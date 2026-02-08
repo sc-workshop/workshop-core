@@ -9,14 +9,9 @@ namespace wk::MD5
 
 namespace wk::hash
 {
-	MD5::MD5()
+	MD5::MD5() 
 	{
-		m_context = new wk::MD5::md5();
-	}
-
-	MD5::~MD5()
-	{
-		delete m_context;
+        clear();
 	}
 
 	MD5::Digest MD5::digest() const
@@ -33,7 +28,6 @@ namespace wk::hash
 
 	void MD5::clear()
 	{
-		delete m_context;
-		m_context = new wk::MD5::md5();
+        m_context = wk::CreateRef<wk::MD5::md5>();
 	}
 }
