@@ -2,6 +2,7 @@
 
 # MacOS setup
 set(CMAKE_OSX_ARCHITECTURES "x86_64;x86_64h;arm64" CACHE STRING "" FORCE)
+set(CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS "x86_64 x86_64h arm64" CACHE STRING "" FORCE)
 
 # C++ headers and source files
 file(GLOB_RECURSE HEADERS source/*.h source/*.hpp)
