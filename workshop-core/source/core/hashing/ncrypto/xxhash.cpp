@@ -10,14 +10,16 @@
 #define XXH_CPU_LITTLE_ENDIAN 1
 #endif
 
-#if WK_X86_64 && !WK_PREFERRED_LATEST_ISA
-	#include "core/3rdparty/xxhash/xxh_x86dispatch.c"
-#else
-	#if WK_PREFERRED_OLDEST_ISA
-		#define XXH_VECTOR XXH_SCALAR
-	#elif WK_X86_64
-		#define XXH_VECTOR XXH_AVX2
-	#endif
+#if WK_X86_64 && !defined(__ARM64__)
+    #if !WK_PREFERRED_LATEST_ISA
+        #include "core/3rdparty/xxhash/xxh_x86dispatch.c"
+    #else
+        #if WK_PREFERRED_OLDEST_ISA
+            #define XXH_VECTOR XXH_SCALAR
+        #elif WK_AVX2
+            #define XXH_VECTOR XXH_AVX2
+        #endif
+    #endif
 #endif
 
 #include "core/3rdparty/xxhash/xxhash.h"

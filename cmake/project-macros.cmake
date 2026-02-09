@@ -34,6 +34,13 @@ macro(wk_project_setup project_name)
 
     wk_set_global(WK_X64 "$<OR:${WK_X86_64},${WK_AARCH64}>")
 
+    # Simd
+    wk_set_global(WK_AVX2_GNU "$<AND:$<OR:${WK_GNU},${WK_CLANG}>,$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>,$<NOT:$<PLATFORM_ID:Darwin>>,${WK_X86_64}>")
+    wk_set_global(WK_AVX2_MSVC "$<AND:${WK_MSVC},$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>")
+
+    # Note: Moved down because of MacOS multi arch
+    #wk_set_global(WK_AVX2 "$<OR:${WK_AVX2_GNU},${WK_AVX2_MSVC}>")
+
     wk_set_global(WK_PREFERRED_ISA "${WK_PREFERRED_CPU_FEATURES}")
     wk_set_global(WK_PREFERRED_LATEST_ISA "$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>")
     wk_set_global(WK_PREFERRED_OLDEST_ISA "$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},DEFAULT>")
@@ -49,20 +56,46 @@ macro(wk_project_setup project_name)
         $<$<OR:${WK_GNU},${WK_CLANG}>: -Wno-unused-variable -Wno-unknown-pragmas -Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-c++98-compat -Wno-c++14-compat> # Shared settings between GNU and Clang compilers
         $<${WK_CLANG}: -Wno-error=microsoft-enum-value -Wno-error=language-extension-token>
 
-        # AVX2
-        $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>:-mavx2 -mbmi2 -maes -mpclmul -mfma>   
-        $<$<AND:${WK_MSVC},$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>: /arch:AVX2 > 
+        # AVX2 on Windows
+        $<${WK_AVX2_MSVC}: /arch:AVX2 >
+        $<${WK_AVX2_GNU}: -mavx2 -mbmi2 -maes -mpclmul -mfma>
     )
+
+    if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        # AVX2 only on haswell
+        if(CMAKE_OSX_ARCHITECTURES MATCHES x86_64h)
+            # I want to believe that there is more... pretty way to do this
+            # But this is the only one that really worked and really passed flags to Clang
+            set_target_properties(${project_name} PROPERTIES
+                XCODE_ATTRIBUTE_OTHER_CPLUSPLUSFLAGS[arch=x86_64h] "$(inherited) -mavx2 -mpopcnt -mf16c -DWK_AVX2=1"
+            )
+        endif()
+
+        # Disable WK_AVX2 define on other archs
+        foreach(arch IN LISTS CMAKE_OSX_ARCHITECTURES)
+            if(NOT arch STREQUAL "x86_64h")
+                set_property(TARGET ${target} APPEND PROPERTY
+                    XCODE_ATTRIBUTE_OTHER_CPLUSPLUSFLAGS[arch=${arch}]
+                    "$(inherited) -DWK_AVX2=0"
+                )
+            endif()
+        endforeach()
+
+    else()
+
+        # Define WK_AVX2 as usual on other platforms
+        wk_set_global(WK_AVX2 "$<OR:${WK_AVX2_GNU},${WK_AVX2_MSVC}>")
+    endif()
 
     # Remove annoying warnings for MSVC
     target_compile_definitions(
-            ${project_name} PRIVATE
-            $<${WK_MSVC}: _CRT_SECURE_NO_WARNINGS _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING>
+        ${project_name} PRIVATE
+        $<${WK_MSVC}: _CRT_SECURE_NO_WARNINGS _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING>
     )
 
     # DLL handling
     get_target_property(target_type ${project_name} TYPE)
-    if (target_type STREQUAL "EXECUTABLE")
+    if(target_type STREQUAL "EXECUTABLE")
         target_compile_definitions(
             ${project_name} PRIVATE
             $<$<BOOL:${WK_BUILD_SHARED}>: WK_DLL_IMPORT=1>
@@ -72,11 +105,11 @@ macro(wk_project_setup project_name)
             ${project_name} PRIVATE
             $<$<BOOL:${WK_BUILD_SHARED}>: WK_DLL_EXPORT=1>
         )
-    endif ()
+    endif()
 
     # TODO(pavidloq): disable in-source builds and handle file grouping automatically.
     # File grouping
-    if (NOT WK_IN_SOURCE_BUILD)
+    if(NOT WK_IN_SOURCE_BUILD)
         get_target_property(SOURCES ${project_name} SOURCES)
         get_target_property(SOURCE_DIR ${project_name} SOURCE_DIR)
         source_group(TREE ${SOURCE_DIR}/source FILES ${SOURCES})
@@ -90,7 +123,7 @@ macro(wk_project_setup project_name)
 
 endmacro()
 
-macro (wk_fast_math project_name)
+macro(wk_fast_math project_name)
     target_compile_options(${project_name} PRIVATE
         $<$<AND:${WK_MSVC_CL},$<VERSION_LESS:$<CXX_COMPILER_VERSION>,19.30>>: /fp:fast >
         $<$<AND:${WK_MSVC_CL},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,19.30>>: /fp:fast >
@@ -109,7 +142,7 @@ macro (wk_fast_math project_name)
     )
 endmacro()
 
-macro (wk_strict_math project_name)
+macro(wk_strict_math project_name)
     target_compile_options(${project_name} PRIVATE
         $<$<AND:${WK_MSVC_CL},$<VERSION_LESS:$<CXX_COMPILER_VERSION>,19.30>>: /fp:strict >
         $<$<AND:${WK_MSVC_CL},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,19.30>>: /fp:precise >
