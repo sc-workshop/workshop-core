@@ -18,6 +18,9 @@ macro(wk_project_setup project_name)
     # Compiler accepts MSVC-style command line options
     wk_set_global(WK_MSVC "$<CXX_COMPILER_ID:MSVC>")
 
+    # Xcode generator
+    wk_set_global(WK_XCODE "$<STREQUAL:${CMAKE_GENERATOR},Xcode>")
+
     # Compiler is Visual Studio cl.exe
     wk_set_global(WK_MSVC_CL "$<AND:${WK_MSVC},$<CXX_COMPILER_ID:MSVC>>")
 
@@ -35,7 +38,7 @@ macro(wk_project_setup project_name)
     wk_set_global(WK_X64 "$<OR:${WK_X86_64},${WK_AARCH64}>")
 
     # Simd
-    wk_set_global(WK_AVX2_GNU "$<AND:$<OR:${WK_GNU},${WK_CLANG}>,$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>,$<NOT:$<PLATFORM_ID:Darwin>>,${WK_X86_64}>")
+    wk_set_global(WK_AVX2_GNU "$<AND:$<OR:${WK_GNU},${WK_CLANG}>,$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>,$<NOT:${WK_XCODE}>,${WK_X86_64}>")
     wk_set_global(WK_AVX2_MSVC "$<AND:${WK_MSVC},$<STREQUAL:${WK_PREFERRED_CPU_FEATURES},AVX2>>")
 
     # Note: Moved down because of MacOS multi arch
@@ -61,7 +64,7 @@ macro(wk_project_setup project_name)
         $<${WK_AVX2_GNU}: -mavx2 -mbmi2 -maes -mpclmul -mfma>
     )
 
-    if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    if(WK_XCODE)
         # AVX2 only on haswell
         if(CMAKE_OSX_ARCHITECTURES MATCHES x86_64h)
             # I want to believe that there is more... pretty way to do this
@@ -80,9 +83,7 @@ macro(wk_project_setup project_name)
                 )
             endif()
         endforeach()
-
     else()
-
         # Define WK_AVX2 as usual on other platforms
         wk_set_global(WK_AVX2 "$<OR:${WK_AVX2_GNU},${WK_AVX2_MSVC}>")
     endif()
