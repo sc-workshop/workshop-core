@@ -8,7 +8,6 @@ function(wk_include_locale)
         simdutf
         GIT_REPOSITORY https://github.com/simdutf/simdutf.git
         GIT_TAG v8.0.0
-        FIND_PACKAGE_ARGS
     )
     FetchContent_MakeAvailable(simdutf)
 
