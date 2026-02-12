@@ -26,5 +26,25 @@ namespace wk
         result.resize(length);
         return result;
 	}
+
+    std::u32string StringConverter::ToUTF32(const std::u16string& str) {
+        std::u32string result;
+        size_t needed = simdutf::utf32_length_from_utf16(str.data(), str.size());
+        result.resize(needed);
+
+        size_t length = simdutf::convert_utf16_to_utf32(str.data(), str.size(), result.data());
+        result.resize(length);
+        return result;
+    }
+
+    std::u16string StringConverter::ToUTF16(const std::u32string& str) {
+        std::u16string result;
+        size_t needed = simdutf::utf16_length_from_utf32(str.data(), str.size());
+        result.resize(needed);
+
+        size_t length = simdutf::convert_utf32_to_utf16(str.data(), str.size(), result.data());
+        result.resize(length);
+        return result;
+    }
 }
 #endif

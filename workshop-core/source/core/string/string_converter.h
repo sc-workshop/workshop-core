@@ -20,7 +20,9 @@ namespace wk
 
 	public:
 		static std::string ToUTF8(const std::u16string& str);
-		static std::u16string ToUTF16(const std::string& str);
+        static std::u16string ToUTF16(const std::string& str);
+        static std::u16string ToUTF16(const std::u32string& str);
+		static std::u32string ToUTF32(const std::u16string& str);
 
 	public:
 		template<typename T, typename S>
