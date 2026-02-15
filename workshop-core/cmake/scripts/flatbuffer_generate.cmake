@@ -292,33 +292,15 @@ function(wk_flatbuffers_generate_headers_gnu)
   add_library(${FLATBUFFERS_GENERATE_HEADERS_TARGET} INTERFACE)
   add_dependencies(
     ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
+    ${FLATC}
+    ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS}
     ${generate_target}
   )
-
-  target_sources(
-    ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
-    INTERFACE
-      ${all_generated_header_files}
-      ${all_generated_binary_files}
-      ${all_generated_source_files}
-      ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
-  add_dependencies(
-    ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
-    ${FLATC}
-    ${FLATBUFFERS_GENERATE_HEADERS_SCHEMAS})
   target_include_directories(
     ${FLATBUFFERS_GENERATE_HEADERS_TARGET}
     INTERFACE ${generated_target_dir})
 
   # Organize file layout for IDEs.
-  source_group(
-    TREE "${generated_target_dir}"
-    PREFIX "Flatbuffers/Generated/Headers Files"
-    FILES ${all_generated_header_files})
-  source_group(
-    TREE "${generated_target_dir}"
-    PREFIX "Flatbuffers/Generated/Source Files"
-    FILES ${all_generated_source_files})
   source_group(
     TREE ${working_dir}
     PREFIX "Flatbuffers/Schemas"
