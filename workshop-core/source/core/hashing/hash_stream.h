@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <type_traits>
+#include <string>
 
 namespace wk::hash
 {
@@ -50,6 +51,12 @@ namespace wk::hash
 		void update(const ValueT & value)
 		{
 			wk::hash::Hash_t<ValueT>::template update<T>(*this, value);
+		}
+
+		template<typename CharT, typename Traits, typename Allocator>
+        void update(const std::basic_string<CharT, Traits, Allocator>& str) {
+            size_t size = str.size() * sizeof(CharT);
+            update((const uint8_t*)str.data(), size);
 		}
 
 	public:
