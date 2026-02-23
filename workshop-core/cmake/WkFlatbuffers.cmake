@@ -8,7 +8,7 @@ function(wk_include_flatbuffers)
     FetchContent_Declare(
         flatbuffers
         GIT_REPOSITORY https://github.com/google/flatbuffers.git
-        GIT_TAG v25.2.10
+        GIT_TAG v25.12.19
         FIND_PACKAGE_ARGS
     )
     FetchContent_MakeAvailable(flatbuffers)
