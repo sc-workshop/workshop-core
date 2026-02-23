@@ -18,7 +18,10 @@ namespace wk::parallel
 
 		auto it = from;
 		for (size_t idx = 0; idx < task_count; idx++) {
-			tasks[idx] = std::async(policy, fn, std::ref(*it++), idx);
+			tasks[idx] = std::async(policy,
+				[fn, item = std::ref(*it++), idx]() mutable {
+					fn(item, idx);
+				});
 		}
 
 		for (size_t i = 0; i < task_count; ++i) tasks[i].wait();
