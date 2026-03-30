@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include <memory>
+#include <cstdlib>
 
 namespace wk
 {
@@ -11,7 +12,7 @@ namespace wk
 	{
 	public:
 		template<typename T = uint8_t>
-		static constexpr T* allocate(size_t size)
+		static T* allocate(size_t size)
 		{
 			if (size == 0)
 			{
@@ -28,7 +29,7 @@ namespace wk
 		}
 
 		template<typename T = void>
-		static constexpr T* copy(const T* source, void* destination, size_t size)
+		static T* copy(const T* source, void* destination, size_t size)
 		{
 			if (size == 0)
 			{
