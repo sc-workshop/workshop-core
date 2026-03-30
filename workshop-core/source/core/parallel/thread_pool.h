@@ -7,6 +7,7 @@
 #include <functional>
 #include <condition_variable>
 #include <iostream>
+#include <exception>
 #include "core/memory/ref.h"
 #include "core/exception/exception.h"
 
