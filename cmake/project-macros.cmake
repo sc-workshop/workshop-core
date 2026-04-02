@@ -57,7 +57,7 @@ macro(wk_project_setup project_name)
 
         $<$<AND:$<OR:${WK_GNU},${WK_CLANG}>,${WK_DEBUG}>: -Wextra -Wpedantic -Werror>
         $<$<OR:${WK_GNU},${WK_CLANG}>: -Wno-unused-variable -Wno-unknown-pragmas -Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-c++98-compat -Wno-c++14-compat> # Shared settings between GNU and Clang compilers
-        $<${WK_CLANG}: -Wno-error=microsoft-enum-value -Wno-error=language-extension-token -Wno-error=implicit-int-conversion>
+        $<${WK_CLANG}: -Wno-error=microsoft-enum-value -Wno-error=language-extension-token -Wno-error=implicit-int-conversion -Wno-nullability-extension>
 
         # AVX2 on Windows
         $<${WK_AVX2_MSVC}: /arch:AVX2 >
