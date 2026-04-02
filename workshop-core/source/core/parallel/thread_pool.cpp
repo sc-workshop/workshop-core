@@ -19,7 +19,6 @@ namespace wk {
 		stop = false;
 		m_threads.clear();
 		m_threads.resize(count);
-		m_threads.resize(count);
 
 		for (size_t i = 0; count > i; i++) {
             auto& thread = m_threads[i] = wk::CreateUnique<ThreadContext>();
