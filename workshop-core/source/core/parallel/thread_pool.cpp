@@ -18,15 +18,15 @@ namespace wk {
 
 		stop = false;
 		m_threads.clear();
-		m_threads.reserve(count);
+		m_threads.resize(count);
 
 		for (size_t i = 0; count > i; i++) {
-			auto& thread = m_threads.emplace_back();
-			thread.handle = std::thread(ThreadPool::worker_function, std::ref(*this), std::ref(thread));
+            auto& thread = m_threads[i] = wk::CreateUnique<ThreadContext>();
+            thread->handle = std::thread(ThreadPool::worker_function, std::ref(*this), thread.get());
 		}
 	}
 
-	void ThreadPool::worker_function(ThreadPool& pool, ThreadContext& context)
+	void ThreadPool::worker_function(ThreadPool& pool, ThreadContext* context)
 	{
 		while (true) {
 			std::function<void()> fn;
@@ -42,7 +42,7 @@ namespace wk {
 					
 
 				fn = std::move(pool.m_tasks.front());
-				context.active = true;
+				context->active = true;
 				pool.m_tasks.pop();
 			}
 
@@ -54,7 +54,7 @@ namespace wk {
 				return;
 			}
 
-			context.active = false;
+			context->active = false;
 			pool.m_output.notify_all();
 		}
 	}
@@ -78,17 +78,21 @@ namespace wk {
 	{
 		size_t result = 0;
 		for (const auto& thread : m_threads) {
-			if (thread.active)
+			if (thread->active)
 				result++;
 		}
 		return result;
 	}
 
 	void ThreadPool::join() {
-		stop = true;
+        {
+            std::lock_guard lock(mut);
+            stop = true;
+        }
+
 		m_input.notify_all();
 		for (auto& thread : m_threads) {
-			thread.handle.join();
+			thread->handle.join();
 		}
 	}
 
