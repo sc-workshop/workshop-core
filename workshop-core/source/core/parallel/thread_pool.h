@@ -13,7 +13,7 @@
 
 namespace wk {
 	struct ThreadContext {
-		bool active = false;
+        std::atomic<bool> active = false;
 		std::thread handle;
 	};
 
@@ -63,7 +63,7 @@ namespace wk {
 
 	private:
 		void setup_threads(size_t count);
-		static void worker_function(ThreadPool& pool, ThreadContext& context);
+        static void worker_function(ThreadPool& pool, wk::Unique<ThreadContext>& context);
 
 		bool should_stop();
 		void handle_pool_break();
@@ -71,7 +71,7 @@ namespace wk {
 	private:
 		std::mutex mut;
 
-		std::vector<ThreadContext> m_threads;
+		std::vector<wk::Unique<ThreadContext>> m_threads;
 		std::queue<std::function<void()>> m_tasks;
 		std::condition_variable m_input;
 		std::condition_variable m_output;
